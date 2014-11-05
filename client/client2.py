@@ -4,6 +4,7 @@ import os,time,sys
 
 data = "x" * 102400   #1MB of data
 ss=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 ss.connect(('172.16.209.243',18888))
 #f=open('aa','wb')
 
