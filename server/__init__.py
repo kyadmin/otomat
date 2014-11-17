@@ -11,15 +11,15 @@ class active_server:
     def __init__(self,filename=None):
         self.filename = filename
         cnf = conf.files_conf_check(self.filename)
-        self.port = cnf.server_port() 
+        self.port = cnf.server_port()
         self.ip =  cnf.server_ip()
         # 线程池
         self.MAXTHREADS = 10
         self.lockpool = Lock()
         self.busylist = {}
         self.waitinglist = {}
-        self.queue = {}
-        self.sem = Semaphore(0) 
+        self.queue = []
+        self.sem = Semaphore(0)
 
     def handleconnection(self,clientsock):
         """ 处理进来的连接"""
@@ -32,7 +32,7 @@ class active_server:
                 return
             if len(self.waitinglist) == 0:
                 startthread()
-            queue.append(clientsock)
+            self.queue.append(clientsock)
             self.sem.release()
         finally:
            self.lockpool.release()
@@ -40,11 +40,11 @@ class active_server:
         """接着客户端socket被加入队列(queue)中,同时semaphore被释放--通知处理线程有可用的新连接
         最后,线程池锁被释放. """
         print "Starting new client processor thread"
-        t = Thread(target = threadworker)
+        t = Thread(target = threadworker())
         t.setDaemon(1)
         t.start()
     def threadworker(self):
-        time.sleep(1) # 
+        time.sleep(1) #
         name = currentThread().getName
         try:
             self.lockpool.acquire()
@@ -58,19 +58,20 @@ class active_server:
             # Can't lock here -- we may already hold the lock, but it's OK
             print "** WARNING ** Thread %s died"  % name
             if name in self.waitinglist:
-                del waitinglist[name]
-            if name in busylist:
-                del busylist[name]
+                del self.waitinglist[name]
+            if name in self.busylist:
+                del self.busylist[name]
             # Start a replacement thread.
             startthread()
     def processclients():
         """ Main loop of client-processing threads."""
         name = currentThread().getName()
+        print name
         while True:
             self.sem.acquire()
             self.lockpool.acquire()
             try:
-                clientsock = queue.pop(0)
+                clientsock = self.queue.pop(0)
                 del self.waitinglist[name]
                 self.busylist[name] = 1
             finally:
@@ -85,7 +86,7 @@ class active_server:
                         sys.exit(0)
                     if not len(data):
                         break
-                    clientsock.sendall(data)
+                clientsock.sendall(data)
             except (KeyboardInterrupt, SystemExit):
                 raise
             except:
@@ -114,15 +115,15 @@ class active_server:
         s.bind((self.ip,int(self.port)))
         s.listen(1)
         while True:
-                try:
-                    clientsock,clientaddr=s.accept()
-                except (KeyboardInterrupt, SystemExit):
-                    #print "you have CTRL+C,Now quit"
-                    raise
-                except:
-                    traceback.print_exc()
-                    continue
-                handleconnection(clientsock)
+            try:
+                clientsock,clientaddr=s.accept()
+            except (KeyboardInterrupt, SystemExit):
+                #print "you have CTRL+C,Now quit"
+                raise
+            except:
+                traceback.print_exc()
+                continue
+        handleconnection(clientsock)
 
 
 def main(f):
