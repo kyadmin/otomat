@@ -9,26 +9,10 @@ import os
 import socket
 from otomat.conf import conf
 from threading import *
+
 #
-class recive_report:
-	def __init__(self,report_file = "report",filename = "otomat.cnf"):
-		self.filename = filename
-		cnf = conf.files_conf_check(self.filename)
-		self.path = cnf.server_report_path()
-		self.report = report_file
-	def  report(self,data):
-		os.chdir(self.path)
-		f = open(self.report,'w+')
-		try:
-			f.writelines(data)
-		except IOError:
-			traceback.print_exc()
-		finally:
-			f.close()
-#
-class active_server(recive_report):
+class active_server:
 	def __init__(self, filename=None):
-		recive_report.__init__(self)
 		self.filename = filename
 		cnf = conf.files_conf_check(self.filename)
 		self.port = cnf.server_port()
@@ -44,6 +28,7 @@ class active_server(recive_report):
 		try:
 			print "Got connection from", clientconn.getpeername()
 			if (active_count()-1) >= self.MaxThreads:
+			# Too many connections. Just close it and exit
 				clientconn.close()
 				return
 			'''Main loop of client-process threads.'''	
@@ -54,8 +39,6 @@ class active_server(recive_report):
 				if  not len(data):
 					break
 				clientconn.sendall(data)
-				print   data
-				recive_report.report(data)
 		except (KeyboardInterrupt, SystemExit):
 			raise
 		except:
@@ -90,10 +73,6 @@ class active_server(recive_report):
 				traceback.print_exc()
 				continue
 			self.handleconnection(clientconn)
-
-
-
-
 
 def main(f):
 	t = active_server(f)

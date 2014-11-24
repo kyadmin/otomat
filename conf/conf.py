@@ -24,7 +24,7 @@ class files_conf_ssh:
                 # 得到指定的sections, options
                 o_password = self.conf.get("host_password","password")
 		return  o_password
-		
+
 class files_conf_check:
         def __init__(self,filename):
                 self.filename = filename
@@ -40,6 +40,10 @@ class files_conf_check:
         def server_ip(self):
                 s_ip = self.conf.get("server","my_ip")
                 return s_ip
+        def server_path(self):
+                s_path = self.conf.get("server","report_path")
+                return s_path
+
         def client_ip(self):
                 c_ip = self.conf.get("client","my_ip")
                 return c_ip
