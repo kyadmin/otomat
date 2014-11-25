@@ -1,0 +1,38 @@
+#!/bin/env bash
+
+# This is installation otomat service with the client script
+if [ "$#" = "1" ];then
+    Python_Path="/usr/lib/python2.6/site-packages"
+    #
+    cp -arp ../otomat  $Python_Path
+    echo "export PYTHONPATH='${Python_Path}/otomat':\$PYTHONPATH" >> /etc/profile
+    source /etc/profile
+    #
+    mkdir /etc/otomat 
+    cp otomat.cnf /etc/otomat
+    chown -R 755 /etc/otomat
+    #
+    server()
+    {
+         cp otomat-bin/otomat_bin-server /usr/bin/otomat_server
+         cp otomat-service/otomat-server-centos /etc/init.d/otomat-server
+    }
+    clinet()
+    {
+         cp otomat-bin/otomat_bin-agent /usr/bin/otomat_agent
+         cp otomat-service/otomat-agent /etc/init.d/otomat-agent
+
+    }
+    case $1 in
+        server )
+            server && exit 0
+            ;;
+        client)
+            client  && exit 0
+            ;;
+    esac
+else
+    echo "Usage: $0 Name"
+    echo "Ex: $0 {server|client}"
+fi
+
