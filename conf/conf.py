@@ -43,6 +43,9 @@ class files_conf_check:
         def server_path(self):
                 s_path = self.conf.get("server","report_path")
                 return s_path
+        def server_worker(self):
+                s_worker = self.conf.get("server","worker")
+                return s_worker
 
         def client_ip(self):
                 c_ip = self.conf.get("client","my_ip")

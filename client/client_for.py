@@ -4,8 +4,8 @@ import os,time,sys
 
 data = "=" * 10240000   #10MB of data
 ss=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-ss.connect(('172.16.209.243',18888))
-#ss.connect(('172.16.209.110',18888))
+#ss.connect(('172.16.209.243',18888))
+ss.connect(('172.16.209.110',18888))
 #f=open('aa','wb')
 
 byteswritten = 0

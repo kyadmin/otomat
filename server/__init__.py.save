@@ -42,7 +42,7 @@ class active_server:
 		self.port = cnf.server_port()
 		self.host = cnf.server_ip()
 		#ThreadPool
-		self.MaxThreads = cnf.server_worker()
+		self.MaxThreads = 5
 		#self.lockpool = Lock()
 		#self.queue = []
 		#self.sem = Semaphore(0)

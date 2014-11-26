@@ -21,6 +21,8 @@ if [ ! -d /var/run/$prog ];then
    mkdir /var/run/$prog
 elif [ ! -d /var/log/$prog ];then
    mkdir /var/log/$prog
+elif [ ! -f $logfile ];then
+    touch $logfile
 fi
 
 
