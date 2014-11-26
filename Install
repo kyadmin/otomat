@@ -17,10 +17,10 @@ if [ "$#" = "1" ];then
          cp otomat-bin/otomat_bin-server /usr/bin/otomat_server
          cp otomat-service/otomat-server-centos /etc/init.d/otomat-server
     }
-    clinet()
+    client()
     {
-         cp otomat-bin/otomat_bin-agent /usr/bin/otomat_agent
-         cp otomat-service/otomat-agent /etc/init.d/otomat-agent
+         cp otomat-bin/otomat-agent /usr/bin/otomat-agent
+         cp otomat-bin/otomat_agent-server /etc/init.d/otomat-agent-server
 
     }
     case $1 in
