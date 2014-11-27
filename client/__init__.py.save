@@ -16,7 +16,7 @@ class active_agent:
 		cnf = conf.files_conf_check(self.filename)
 		self.port = cnf.server_port()
 		self.host = cnf.server_ip()
-
+	
 	def  handleconnection(self):
 		data = str(self.transnit_data())
 		while True:
@@ -29,13 +29,13 @@ class active_agent:
 			if not len(buf):
 				break
 			s.close()
-			time.sleep(10)
+			time.sleep(3)
 			continue
-
+	
 	def transnit_data(self):
 		data = {}
 		collect = systemmonitor.Monitor_systeminfo()
-		# cpu
+		# cpu 
 		cpu_percent = collect.Cpu_Percent()
 		# mem
 		mem_total = collect.Mem_info().total
@@ -61,21 +61,21 @@ class active_agent:
 		L2 = [cpu_percent,mem_total,mem_free,mem_used,mem_percent,
 			swap_total,swap_free,swap_used,swap_percent,disk_total,
 			disk_free,disk_used,disk_percent,network_recv,network_sent]
-
-
+		
+		
 		data = dict(zip(L1[::],L2))
 		#print data
 		#data = 'hello,word'
 		return data
+		
 
-
-
-
-
+		
+			 
+			
 
 
 #if __name__=="__main__":
-
+	
 #	t = active_agent()
 #	t.transnit_data()
 

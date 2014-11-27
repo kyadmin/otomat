@@ -1,7 +1,7 @@
 [server]
-host = 172.16.209.243
+host = 172.16.209.110
 port = 18888
-my_ip = 172.16.209.243
+my_ip = 172.16.209.110
 report_path = /etc/otomat/report
 worker = 5
 [client]
