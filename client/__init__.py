@@ -10,12 +10,16 @@ import pickle
 from otomat.conf import conf
 from otomat.collection import systemmonitor
 
+#
+
+
 class active_agent:
 	def __init__(self, filename = '/etc/otomat/otomat.cnf'):
 		self.filename = filename
 		cnf = conf.files_conf_check(self.filename)
 		self.port = cnf.server_port()
 		self.host = cnf.server_ip()
+		self.client_nic = cnf.nic_port()
 
 	def  handleconnection(self):
 		data = str(self.transnit_data())
@@ -33,6 +37,7 @@ class active_agent:
 			continue
 
 	def transnit_data(self):
+		global cnf
 		data = {}
 		collect = systemmonitor.Monitor_systeminfo()
 		# cpu
@@ -54,13 +59,20 @@ class active_agent:
 		# network nic I/O
 		network_recv = collect.nic_io_centos().bytes_recv
 		network_sent = collect.nic_io_centos().bytes_sent
+		# hostname and ipaddress
+		host = collect.hostname()
+		ifname = self.client_nic()
+		ip_address = collect.get_ip_address(ifname)
+		#
 		L1 = ['cpu_percent','mem_total','mem_free','mem_used',
 			'mem_percent','swap_total','swap_free','swap_used',
 			'swap_percent','disk_total','disk_free','disk_used',
-			'disk_percent','network_recv','network_sent']
+			'disk_percent','network_recv','network_sent','hostname',
+			'host_ip']
 		L2 = [cpu_percent,mem_total,mem_free,mem_used,mem_percent,
 			swap_total,swap_free,swap_used,swap_percent,disk_total,
-			disk_free,disk_used,disk_percent,network_recv,network_sent]
+			disk_free,disk_used,disk_percent,network_recv,network_sent,
+			host,ip_address]
 
 
 		data = dict(zip(L1[::],L2))

@@ -20,7 +20,7 @@ if [ "$#" = "1" ];then
     client()
     {
          cp otomat-bin/otomat_agent-server /usr/bin/otomat-agent
-         cp otomat-service/otomat_agent-cenots /etc/init.d/otomat-agent-server
+         cp otomat-service/otomat-agent-centos /etc/init.d/otomat-agent-server
 
     }
     case $1 in

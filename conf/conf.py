@@ -56,3 +56,6 @@ class files_conf_check:
         def client_port(self):
                 c_port = self.conf.get("client","port")
                 return c_port
+        def  nic_port(self):
+                n_port = self.conf.get("client","nic")
+                return n_port
