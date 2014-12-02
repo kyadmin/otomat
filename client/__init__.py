@@ -61,7 +61,7 @@ class active_agent:
 		network_sent = collect.nic_io_centos().bytes_sent
 		# hostname and ipaddress
 		host = collect.hostname()
-		ifname = self.client_nic()
+		ifname = self.client_nic
 		ip_address = collect.get_ip_address(ifname)
 		#
 		L1 = ['cpu_percent','mem_total','mem_free','mem_used',
