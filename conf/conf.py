@@ -31,6 +31,7 @@ class files_conf_check:
                 self.conf = ConfigParser.ConfigParser()
                 self.conf.read(self.filename)
                 s = self.conf.sections()
+	# server configure
         def server_port(self):
                 s_port = self.conf.get("server","port")
                 return s_port
@@ -46,7 +47,21 @@ class files_conf_check:
         def server_worker(self):
                 s_worker = self.conf.get("server","worker")
                 return s_worker
-
+        #  mysql database  configure
+	def sql_host(self):
+                sql_host = self.conf.get("sql","host")
+                return sql_host
+        def sql_user(self):
+                sql_user = self.conf.get("sql","user")
+                return sql_user
+        def sql_password(self):
+                sql_password = self.conf.get("sql","password")
+                return sql_password
+        def sql_defaultdb(self):
+                sql_db = self.conf.get("sql","defaultdb")
+                return sql_db
+	
+	# cleint agent configure
         def client_ip(self):
                 c_ip = self.conf.get("client","my_ip")
                 return c_ip
