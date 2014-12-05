@@ -9,6 +9,19 @@ host = 172.24.0.2
 user = otomat
 password = otomat
 defaultdb = otomat
+[rrdtool]
+host = 172.16.209.12,172.16.209.219,172.16.209.228
+cpu = cpu.rrd
+mem = mem.rrd
+disk = disk.rrd
+network = nic.rrd
+dir = /etc/otomat/report/
+[graph]
+cpu = cpu.png
+mem = mem.png
+disk = disk.png
+network = nic.png
+
 
 [client]
 host = 172.16.209.243

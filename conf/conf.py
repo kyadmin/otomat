@@ -60,7 +60,35 @@ class files_conf_check:
         def sql_defaultdb(self):
                 sql_db = self.conf.get("sql","defaultdb")
                 return sql_db
-	
+	# rrdtool configure
+        def rrdtool_host(self):
+                rrdtool_host = self.conf.get("rrdtool","host")
+                return rrdtool_host
+        def rrdtool_cpu(self):
+                rrdtool_cpu  = self.conf.get("rrdtool","cpu")
+                return rrdtool_cpu
+        def rrdtool_mem(self):
+               	rrdtool_mem  = self.conf.get("rrdtool","mem")
+                return rrdtool_mem
+        def rrdtool_disk(self):
+                rrdtool_disk = self.conf.get("rrdtool","disk")
+                return rrdtool_disk
+        def rrdtool_nic(self):
+                rrdtool_nic = self.conf.get("rrdtool","network")
+                return rrdtool_nic
+	# graph configure
+        def graph_cpu(self):
+                graph_cpu = self.conf.get("graph","cpu")
+                return graph_cpu
+        def graph_mem(self):
+                graph_mem = self.conf.get("graph","mem")
+                return graph_mem
+        def graph_disk(self):
+                graph_disk = self.conf.get("graph","disk")
+                return graph_disk
+        def graph_network(self):
+                graph_network = self.conf.get("graph","network")
+                return graph_network
 	# cleint agent configure
         def client_ip(self):
                 c_ip = self.conf.get("client","my_ip")
