@@ -11,6 +11,7 @@ from otomat.conf import conf
 from threading import *
 from Queue import Queue
 from otomat.sql import otomat_sql
+from otomat.rrdtool import report
 #
 queue=Queue() #create queue
 #
@@ -168,6 +169,13 @@ class active_server:
 			self.handleconnection(clientconn)
 
 
+def rrdtool_rport(f):
+	t2 = report.graph_rrdtool(f)
+	t2.rrdb()
+	while True:
+		t2.rrdb_insert()
+		time.sleep(3600)
+                continue
 
 
 #if __name__=="__main__":
@@ -179,8 +187,9 @@ class active_server:
 #	#t.report()
 
 def main(argv=sys.argv[1:]):
-	t = active_server(argv)
-	t.listener()
+	t1 = active_server(argv)
+	t1.listener()
+	rrdtool_rport(argv)
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
 

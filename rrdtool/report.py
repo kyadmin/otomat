@@ -28,15 +28,20 @@ class graph_rrdtool:
 	self.graph_mem = cnf.graph_mem()
 	self.graph_disk = cnf.graph_disk()
 	self.graph_network = cnf.graph_network()
-        self.insert = insert
         self.graph = graph
         self.title = title
+	# sql 
+	self.host = cnf.sql_host()
+	self.user = cnf.sql_user()
+	self.password = cnf.sql_password()
+	self.defaultdb = cnf.sql_defaultdb()
         #self.time = str(int(time.time()))
     def rrdb(self):
         """
         1.创建rrdtool的数据库.
         """
-        cur_time = str(int(time.time())) 
+        #cur_time = str(int(time.time())) 
+        cur_time = '1417652469' 
 
         
 
@@ -59,7 +64,7 @@ class graph_rrdtool:
 		#		os.mknod(j)
 			if not os.path.exists('nic.rrd'):
 				# network_db
-				rrdtool.create('nic.rrd','--step','300','--start',cur_time,
+				rrdtool.create('nic.rrd','--step','60','--start',cur_time,
         				'DS:input:GAUGE:600:U:U',
         				'DS:output:GAUGE:600:U:U',
        					'RRA:LAST:0.5:1:600',
@@ -68,7 +73,7 @@ class graph_rrdtool:
         				'RRA:MIN:0.5:5:600')
 			if not os.path.exists('cpu.rrd'):
 				# cpu_db
-				rrdtool.create('cpu.rrd','--step','300','--start',cur_time,
+				rrdtool.create('cpu.rrd','--step','60','--start',cur_time,
 					'DS:cpu_percent:GAUGE:600:U:U',
 					'RRA:LAST:0.5:1:600',
 					'RRA:AVERAGE:0.5:5:600',
@@ -76,7 +81,7 @@ class graph_rrdtool:
 					'RRA:MIN:0.5:5:600')
 			if not os.path.exists('mem.rrd'):
 				# mem_db
-				rrdtool.create('mem.rrd','--step','300','--start',cur_time,
+				rrdtool.create('mem.rrd','--step','60','--start',cur_time,
 					'DS:mem_total:GAUGE:600:U:U',
 					'DS:mem_free:GAUGE:600:U:U',
 					'DS:mem_used:GAUGE:600:U:U',
@@ -91,7 +96,7 @@ class graph_rrdtool:
 					'RRA:MIN:0.5:5:600')
 			if not os.path.exists('disk.rrd'):
 				# disk_db
-				rrdtool.create('disk.rrd','--step','300','--start',cur_time,
+				rrdtool.create('disk.rrd','--step','60','--start',cur_time,
 					'DS:disk_total:GAUGE:600:U:U',
 					'DS:disk_free:GAUGE:600:U:U',
 					'DS:disk_used:GAUGE:600:U:U',
@@ -110,21 +115,120 @@ class graph_rrdtool:
 	sql_cpu = "select Host_ip,Time,Cpu_Utilization from report_list \
 		where Time > date_format(date_sub(now(),interval 1 HOUR),'%Y-%m-%d %H:00:00') \
 		and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
-	sql_disk = "select Host_ip,Time,Mem_total,Mem_free,Mem_used,Mem_percent,Swap_total, \
+	sql_mem = "select Host_ip,Time,Mem_total,Mem_free,Mem_used,Mem_percent,Swap_total, \
 		Swap_free,Swap_used,Swap_percent from report_list \
 		where Time > date_format(date_sub(now(),interval 1 HOUR),'%Y-%m-%d %H:00:00')  \
 		and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
-	sql_mem = "select Host_ip,Time,Disk_total,Disk_free,Disk_used,Disk_percent from report_list \
+	sql_disk = "select Host_ip,Time,Disk_total,Disk_free,Disk_used,Disk_percent from report_list \
 		where Time > date_format(date_sub(now(),interval 1 HOUR),'%Y-%m-%d %H:00:00') \
 		and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
 	sql_nic = "select Host_ip,Time,Network_traffic_recv,Network_traffic_sent from report_list \
 		where Time > date_format(date_sub(now(),interval 1 HOUR),'%Y-%m-%d %H:00:00') \
 		and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
-	while True:
-		conn = MySQLdb.connect(host,user,password,defaultdb)
-		cur = conn.cursor()
-		
-	
+	# mysql configure
+	host_sql = self.host
+	user = self.user
+	password = self.password
+	defaultdb = self.defaultdb
+	# rrdtool host configure
+	host = self.rrdtool_host
+	report_dir = self.rrdtool_dir
+	conn = MySQLdb.connect(host_sql,user,password,defaultdb)
+	cur = conn.cursor()
+	#####################cpu########################################### 
+	cpu_percent = []
+	cur.execute(sql_cpu)
+	rows = int(cur.rowcount)
+	for i in xrange(rows):
+		row = cur.fetchone()
+		#print row[0],row[1],row[2]
+		a = str(row[0])
+		e = str(row[1])
+		timeArray = time.strptime(e, "%Y-%m-%d %H:%M:%S")
+		b = str(int(time.mktime(timeArray)))
+		c = str(row[2])
+		cpu_percent = [a,b,c]
+		for j in list(host.split(',')):
+			if j == cpu_percent[0] :
+				os.chdir(report_dir)
+				os.chdir(j)
+				rrdtool.update('cpu.rrd','%s:%s' % (cpu_percent[1],cpu_percent[2]))
+				#os.getcwd()
+	#####################network########################################### 
+	nic_list = []
+	cur.execute(sql_nic)
+	rows = int(cur.rowcount)
+	for i in xrange(rows):
+		row = cur.fetchone()
+		#print row[0],row[1],row[2]
+		a = str(row[0])
+		e = str(row[1])
+		timeArray = time.strptime(e, "%Y-%m-%d %H:%M:%S")
+		b = str(int(time.mktime(timeArray)))
+		c = str(row[2])
+		d = str(row[3])
+		nic_list = [a,b,c,d]
+		for j in list(host.split(',')):
+			if j == nic_list[0] :
+				os.chdir(report_dir)
+				os.chdir(j)
+				rrdtool.update('nic.rrd','%s:%s:%s' % (nic_list[1],nic_list[2],nic_list[3]))
+						
+			   
+	#####################disk########################################### 
+	disk_list = []
+	cur.execute(sql_disk)
+	rows = int(cur.rowcount)
+	for i in xrange(rows):
+		row = cur.fetchone()
+		#print row[0],row[1],row[2]
+		a = str(row[0])
+		g = str(row[1])
+		timeArray = time.strptime(g, "%Y-%m-%d %H:%M:%S")
+		b = str(int(time.mktime(timeArray)))
+		c = str(row[2])
+		d = str(row[3])	
+		e = str(row[4])
+		f = str(row[5])
+		disk_list = [a,b,c,d,e,f]
+		for j in list(host.split(',')):
+			if j == disk_list[0] :
+				os.chdir(report_dir)
+				os.chdir(j)
+				rrdtool.update('disk.rrd','%s:%s:%s:%s:%s' % (disk_list[1],
+					disk_list[2],disk_list[3],disk_list[4],disk_list[5]))
+				#os.getcwd()
+	#####################mem########################################### 
+	mem_list = []
+	cur.execute(sql_mem)
+	rows = int(cur.rowcount)
+	for i in xrange(rows):
+		row = cur.fetchone()
+		#print row[0],row[1],row[2]
+		a = str(row[0])
+		m = str(row[1])
+		timeArray = time.strptime(m, "%Y-%m-%d %H:%M:%S")
+		b = str(int(time.mktime(timeArray)))
+		c = str(row[2])
+		d = str(row[3])
+		e = str(row[4])
+		f = str(row[5])
+		g = str(row[6])
+		h = str(row[7])
+		k = str(row[8])
+		l = str(row[9])
+		mem_list = [a,b,c,d,e,f,g,h,k,l]
+		#print mem_list
+		for j in list(host.split(',')):
+			if j == mem_list[0] :
+				#print "%s is %s" %(j,mem_list[0])
+				os.chdir(report_dir)
+				os.chdir(j)
+				#print os.getcwd()
+				rrdtool.update('mem.rrd','%s:%s:%s:%s:%s:%s:%s:%s:%s' % (mem_list[1],mem_list[2],
+					mem_list[3],mem_list[4],mem_list[5],mem_list[6],mem_list[7],mem_list[8],
+					mem_list[9]))
+	conn.close()
     def rrdtool_graph(self):
          rrdtool.graph(self.graph,'--start',self.time,
             '--title',self.title,
