@@ -4,6 +4,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 import rrdtool
 import random
+import MySQLdb
 from otomat.conf import conf
 class graph_rrdtool:
     """
@@ -65,66 +66,76 @@ class graph_rrdtool:
 			if not os.path.exists('nic.rrd'):
 				# network_db
 				rrdtool.create('nic.rrd','--step','60','--start',cur_time,
-        				'DS:input:GAUGE:600:U:U',
-        				'DS:output:GAUGE:600:U:U',
-       					'RRA:LAST:0.5:1:600',
-        				'RRA:AVERAGE:0.5:5:600',
-       					'RRA:MAX:0.5:5:600',
-        				'RRA:MIN:0.5:5:600')
+        				'DS:input:GAUGE:120:U:U',
+        				'DS:output:GAUGE:120:U:U',
+       					'RRA:LAST:0.5:1:120',
+        				'RRA:AVERAGE:0.5:5:120',
+       					'RRA:MAX:0.5:5:120',
+        				'RRA:MIN:0.5:5:120')
 			if not os.path.exists('cpu.rrd'):
 				# cpu_db
 				rrdtool.create('cpu.rrd','--step','60','--start',cur_time,
-					'DS:cpu_percent:GAUGE:600:U:U',
-					'RRA:LAST:0.5:1:600',
-					'RRA:AVERAGE:0.5:5:600',
-					'RRA:MAX:0.5:5:600',
-					'RRA:MIN:0.5:5:600')
+					'DS:cpu_percent:GAUGE:120:U:U',
+					'RRA:LAST:0.5:1:120',
+					'RRA:AVERAGE:0.5:5:120',
+					'RRA:MAX:0.5:5:120',
+					'RRA:MIN:0.5:5:120')
 			if not os.path.exists('mem.rrd'):
 				# mem_db
 				rrdtool.create('mem.rrd','--step','60','--start',cur_time,
-					'DS:mem_total:GAUGE:600:U:U',
-					'DS:mem_free:GAUGE:600:U:U',
-					'DS:mem_used:GAUGE:600:U:U',
-					'DS:mem_percent:GAUGE:600:U:U',
-					'DS:swap_total:GAUGE:600:U:U',
-					'DS:swap_free:GAUGE:600:U:U',
-					'DS:swap_used:GAUGE:600:U:U',
-					'DS:swap_percnet:GAUGE:600:U:U',
-					'RRA:LAST:0.5:1:600',
-					'RRA:AVERAGE:0.5:5:600',
-					'RRA:MAX:0.5:5:600',
-					'RRA:MIN:0.5:5:600')
+					'DS:mem_total:GAUGE:120:U:U',
+					'DS:mem_free:GAUGE:120:U:U',
+					'DS:mem_used:GAUGE:120:U:U',
+					'DS:mem_percent:GAUGE:120:U:U',
+					'DS:swap_total:GAUGE:120:U:U',
+					'DS:swap_free:GAUGE:120:U:U',
+					'DS:swap_used:GAUGE:120:U:U',
+					'DS:swap_percnet:GAUGE:120:U:U',
+					'RRA:LAST:0.5:1:120',
+					'RRA:AVERAGE:0.5:5:120',
+					'RRA:MAX:0.5:5:120',
+					'RRA:MIN:0.5:5:120')
 			if not os.path.exists('disk.rrd'):
 				# disk_db
 				rrdtool.create('disk.rrd','--step','60','--start',cur_time,
-					'DS:disk_total:GAUGE:600:U:U',
-					'DS:disk_free:GAUGE:600:U:U',
-					'DS:disk_used:GAUGE:600:U:U',
-					'DS:disk_percnet:GAUGE:600:U:U',
-					'RRA:LAST:0.5:1:600',
-					'RRA:AVERAGE:0.5:5:600',
-					'RRA:MAX:0.5:5:600',
-					'RRA:MIN:0.5:5:600')
-    def rrdb_insert(self):
+					'DS:disk_total:GAUGE:120:U:U',
+					'DS:disk_free:GAUGE:120:U:U',
+					'DS:disk_used:GAUGE:120:U:U',
+					'DS:disk_percnet:GAUGE:120:U:U',
+					'RRA:LAST:0.5:1:120',
+					'RRA:AVERAGE:0.5:5:120',
+					'RRA:MAX:0.5:5:120',
+					'RRA:MIN:0.5:5:120')
+    def rrdb_update(self):
 	"""
 	2.插入rrdtool所需的数据
 	3.更新rrdtool数据库
 
 	"""
-	import MySQLdb
+	#sql_cpu = "select Host_ip,Time,Cpu_Utilization from report_list \
+	#	where Time > date_format(date_sub(now(),interval 1 HOUR),'%Y-%m-%d %H:00:00') \
+	#	and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
 	sql_cpu = "select Host_ip,Time,Cpu_Utilization from report_list \
-		where Time > date_format(date_sub(now(),interval 1 HOUR),'%Y-%m-%d %H:00:00') \
-		and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
+		where Time > date_sub(now(),interval 5 MINUTE) and Time< now()"
+	#sql_mem = "select Host_ip,Time,Mem_total,Mem_free,Mem_used,Mem_percent,Swap_total, \
+	#	Swap_free,Swap_used,Swap_percent from report_list \
+	#	where Time > date_format(date_sub(now(),interval 1 HOUR),'%Y-%m-%d %H:00:00')  \
+	#	and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
 	sql_mem = "select Host_ip,Time,Mem_total,Mem_free,Mem_used,Mem_percent,Swap_total, \
 		Swap_free,Swap_used,Swap_percent from report_list \
-		where Time > date_format(date_sub(now(),interval 1 HOUR),'%Y-%m-%d %H:00:00')  \
-		and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
+		where Time > date_sub(now(),interval 5 MINUTE) and Time< now();"
+	#sql_disk = "select Host_ip,Time,Disk_total,Disk_free,Disk_used,Disk_percent from report_list \
+	#	where Time > date_format(date_sub(now(),interval 1 HOUR),'%Y-%m-%d %H:00:00') \
+	#	and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
 	sql_disk = "select Host_ip,Time,Disk_total,Disk_free,Disk_used,Disk_percent from report_list \
-		where Time > date_format(date_sub(now(),interval 1 HOUR),'%Y-%m-%d %H:00:00') \
-		and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
+		where Time > date_sub(now(),interval 5 MINUTE) and Time< now();"
+	#sql_nic = "select Host_ip,Time,Network_traffic_recv,Network_traffic_sent from report_list \
+	#	where Time > date_format(date_sub(now(),interval 1 HOUR),'%Y-%m-%d %H:00:00') \
+	#	and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
 	sql_nic = "select Host_ip,Time,Network_traffic_recv,Network_traffic_sent from report_list \
-		where Time > date_format(date_sub(now(),interval 1 HOUR),'%Y-%m-%d %H:00:00') \
-		and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
+		where Time > date_sub(now(),interval 5 MINUTE) and Time< now();"
+    #####################cpu########################################### 
+    def cpu_rrd(self,sql_cpu):
 	# mysql configure
 	host_sql = self.host
 	user = self.user
@@ -135,7 +146,6 @@ class graph_rrdtool:
 	report_dir = self.rrdtool_dir
 	conn = MySQLdb.connect(host_sql,user,password,defaultdb)
 	cur = conn.cursor()
-	#####################cpu########################################### 
 	cpu_percent = []
 	cur.execute(sql_cpu)
 	rows = int(cur.rowcount)
@@ -150,11 +160,25 @@ class graph_rrdtool:
 		cpu_percent = [a,b,c]
 		for j in list(host.split(',')):
 			if j == cpu_percent[0] :
+				print report_dir
 				os.chdir(report_dir)
 				os.chdir(j)
-				rrdtool.update('cpu.rrd','%s:%s' % (cpu_percent[1],cpu_percent[2]))
-				#os.getcwd()
-	#####################network########################################### 
+				db = rrdtool.updatev('cpu.rrd','%s:%s' % (cpu_percent[1],cpu_percent[2]))
+				print db
+				print os.getcwd()
+				print "cpu.rrd"
+    #####################network########################################### 
+    def nic_rrd(self,sql_nic):
+	# mysql configure
+	host_sql = self.host
+	user = self.user
+	password = self.password
+	defaultdb = self.defaultdb
+	# rrdtool host configure
+	host = self.rrdtool_host
+	report_dir = self.rrdtool_dir
+	conn = MySQLdb.connect(host_sql,user,password,defaultdb)
+	cur = conn.cursor()
 	nic_list = []
 	cur.execute(sql_nic)
 	rows = int(cur.rowcount)
@@ -172,10 +196,24 @@ class graph_rrdtool:
 			if j == nic_list[0] :
 				os.chdir(report_dir)
 				os.chdir(j)
-				rrdtool.update('nic.rrd','%s:%s:%s' % (nic_list[1],nic_list[2],nic_list[3]))
-						
+				db = rrdtool.updatev('nic.rrd','%s:%s:%s' % (nic_list[1],nic_list[2],
+					nic_list[3]))
+				print db
+				print os.getcwd()
+				print "nic.rrd"	
 			   
-	#####################disk########################################### 
+    #####################disk########################################### 
+    def disk_rrd(self,sql_disk):
+	# mysql configure
+	host_sql = self.host
+	user = self.user
+	password = self.password
+	defaultdb = self.defaultdb
+	# rrdtool host configure
+	host = self.rrdtool_host
+	report_dir = self.rrdtool_dir
+	conn = MySQLdb.connect(host_sql,user,password,defaultdb)
+	cur = conn.cursor()
 	disk_list = []
 	cur.execute(sql_disk)
 	rows = int(cur.rowcount)
@@ -195,10 +233,23 @@ class graph_rrdtool:
 			if j == disk_list[0] :
 				os.chdir(report_dir)
 				os.chdir(j)
-				rrdtool.update('disk.rrd','%s:%s:%s:%s:%s' % (disk_list[1],
+				db = rrdtool.updatev('disk.rrd','%s:%s:%s:%s:%s' % (disk_list[1],
 					disk_list[2],disk_list[3],disk_list[4],disk_list[5]))
-				#os.getcwd()
-	#####################mem########################################### 
+				print db
+				print os.getcwd()
+				print "disk.rrd"
+    #####################mem########################################### 
+    def mem_rrd(self,sql_mem):
+	# mysql configure
+	host_sql = self.host
+	user = self.user
+	password = self.password
+	defaultdb = self.defaultdb
+	# rrdtool host configure
+	host = self.rrdtool_host
+	report_dir = self.rrdtool_dir
+	conn = MySQLdb.connect(host_sql,user,password,defaultdb)
+	cur = conn.cursor()
 	mem_list = []
 	cur.execute(sql_mem)
 	rows = int(cur.rowcount)
@@ -225,10 +276,13 @@ class graph_rrdtool:
 				os.chdir(report_dir)
 				os.chdir(j)
 				#print os.getcwd()
-				rrdtool.update('mem.rrd','%s:%s:%s:%s:%s:%s:%s:%s:%s' % (mem_list[1],mem_list[2],
-					mem_list[3],mem_list[4],mem_list[5],mem_list[6],mem_list[7],mem_list[8],
-					mem_list[9]))
-	conn.close()
+				db = rrdtool.updatev('mem.rrd','%s:%s:%s:%s:%s:%s:%s:%s:%s' % (mem_list[1],
+					mem_list[2],mem_list[3],mem_list[4],mem_list[5],mem_list[6],
+					mem_list[7],mem_list[8],mem_list[9]))
+				print db
+				print os.getcwd()
+				print "mem.rrd"
+
     def rrdtool_graph(self):
          rrdtool.graph(self.graph,'--start',self.time,
             '--title',self.title,

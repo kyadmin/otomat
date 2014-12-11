@@ -10,7 +10,7 @@ user = otomat
 password = otomat
 defaultdb = otomat
 [rrdtool]
-host = 172.16.209.12,172.16.209.219,172.16.209.228
+host = 172.16.209.12,172.24.0.21,172.16.209.22,172.16.209.23
 cpu = cpu.rrd
 mem = mem.rrd
 disk = disk.rrd

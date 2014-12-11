@@ -11,7 +11,7 @@ from otomat.conf import conf
 from threading import *
 from Queue import Queue
 from otomat.sql import otomat_sql
-from otomat.rrdtool import report
+from otomat.rrdtool_report import report
 #
 queue=Queue() #create queue
 #
@@ -170,11 +170,11 @@ class active_server:
 
 
 def rrdtool_rport(f):
-	t2 = report.graph_rrdtool(f)
-	t2.rrdb()
 	while True:
-		t2.rrdb_insert()
-		time.sleep(3600)
+		t2 = report.graph_rrdtool(f)
+		t2.rrdb()
+		t2.rrdb_update()
+		time.sleep(300)
                 continue
 
 
