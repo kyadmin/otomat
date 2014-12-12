@@ -4,6 +4,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 import rrdtool
 import random
+import time
 import MySQLdb
 from otomat.conf import conf
 class graph_rrdtool:
@@ -43,10 +44,6 @@ class graph_rrdtool:
         """
         #cur_time = str(int(time.time())) 
         cur_time = '1417652469' 
-
-        
-
-	
 	host = self.rrdtool_host
 	#print host
 	report_dir = self.rrdtool_dir
@@ -65,47 +62,95 @@ class graph_rrdtool:
 		#		os.mknod(j)
 			if not os.path.exists('nic.rrd'):
 				# network_db
-				rrdtool.create('nic.rrd','--step','60','--start',cur_time,
-        				'DS:input:GAUGE:120:U:U',
-        				'DS:output:GAUGE:120:U:U',
-       					'RRA:LAST:0.5:1:120',
-        				'RRA:AVERAGE:0.5:5:120',
-       					'RRA:MAX:0.5:5:120',
-        				'RRA:MIN:0.5:5:120')
+				rrdtool.create('nic.rrd','--step','300','--start',cur_time,
+        				'DS:input:COUNTER:600:U:U',
+        				'DS:output:COUNTER:600:U:U',
+       					'RRA:LAST:0.5:1:600',
+       					'RRA:LAST:0.5:4:600',
+       					'RRA:LAST:0.5:24:600',
+       					'RRA:LAST:0.5:288:730',
+       					'RRA:MAX:0.5:1:600',
+       					'RRA:MAX:0.5:4:600',
+       					'RRA:MAX:0.5:24:600',
+       					'RRA:MAX:0.5:288:730',
+       					'RRA:MIN:0.5:1:600',
+       					'RRA:MIN:0.5:4:600',
+       					'RRA:MIN:0.5:24:600',
+       					'RRA:MIN:0.5:288:730',
+       					'RRA:AVERAGE:0.5:1:600',
+       					'RRA:AVERAGE:0.5:6:600',
+       					'RRA:AVERAGE:0.5:24:600',
+       					'RRA:AVERAGE:0.5:288:730')
 			if not os.path.exists('cpu.rrd'):
 				# cpu_db
-				rrdtool.create('cpu.rrd','--step','60','--start',cur_time,
-					'DS:cpu_percent:GAUGE:120:U:U',
-					'RRA:LAST:0.5:1:120',
-					'RRA:AVERAGE:0.5:5:120',
-					'RRA:MAX:0.5:5:120',
-					'RRA:MIN:0.5:5:120')
+				rrdtool.create('cpu.rrd','--step','300','--start',cur_time,
+					'DS:cpu_percent:GAUGE:600:U:U',
+       					'RRA:LAST:0.5:1:600',
+       					'RRA:LAST:0.5:6:700',
+       					'RRA:LAST:0.5:24:775',
+       					'RRA:LAST:0.5:288:797',
+       					'RRA:MAX:0.5:1:600',
+       					'RRA:MAX:0.5:6:700',
+       					'RRA:MAX:0.5:24:775',
+       					'RRA:MAX:0.5:288:797',
+       					'RRA:MIN:0.5:1:600',
+       					'RRA:MIN:0.5:6:700',
+       					'RRA:MIN:0.5:24:775',
+       					'RRA:MIN:0.5:288:797',
+       					'RRA:AVERAGE:0.5:1:600',
+       					'RRA:AVERAGE:0.5:6:700',
+       					'RRA:AVERAGE:0.5:24:775',
+       					'RRA:AVERAGE:0.5:288:797')
 			if not os.path.exists('mem.rrd'):
 				# mem_db
-				rrdtool.create('mem.rrd','--step','60','--start',cur_time,
-					'DS:mem_total:GAUGE:120:U:U',
-					'DS:mem_free:GAUGE:120:U:U',
-					'DS:mem_used:GAUGE:120:U:U',
-					'DS:mem_percent:GAUGE:120:U:U',
-					'DS:swap_total:GAUGE:120:U:U',
-					'DS:swap_free:GAUGE:120:U:U',
-					'DS:swap_used:GAUGE:120:U:U',
-					'DS:swap_percnet:GAUGE:120:U:U',
-					'RRA:LAST:0.5:1:120',
-					'RRA:AVERAGE:0.5:5:120',
-					'RRA:MAX:0.5:5:120',
-					'RRA:MIN:0.5:5:120')
+				rrdtool.create('mem.rrd','--step','300','--start',cur_time,
+					'DS:mem_total:GAUGE:600:U:U',
+					'DS:mem_free:GAUGE:600:U:U',
+					'DS:mem_used:GAUGE:600:U:U',
+					'DS:mem_percent:GAUGE:600:U:U',
+					'DS:swap_total:GAUGE:600:U:U',
+					'DS:swap_free:GAUGE:600:U:U',
+					'DS:swap_used:GAUGE:600:U:U',
+					'DS:swap_percnet:GAUGE:600:U:U',
+       					'RRA:LAST:0.5:1:600',
+       					'RRA:LAST:0.5:6:700',
+       					'RRA:LAST:0.5:24:775',
+       					'RRA:LAST:0.5:288:797',
+       					'RRA:MAX:0.5:1:600',
+       					'RRA:MAX:0.5:6:700',
+       					'RRA:MAX:0.5:24:775',
+       					'RRA:MAX:0.5:288:797',
+       					'RRA:MIN:0.5:1:600',
+       					'RRA:MIN:0.5:6:700',
+       					'RRA:MIN:0.5:24:775',
+       					'RRA:MIN:0.5:288:797',
+       					'RRA:AVERAGE:0.5:1:600',
+       					'RRA:AVERAGE:0.5:6:700',
+       					'RRA:AVERAGE:0.5:24:775',
+       					'RRA:AVERAGE:0.5:288:797')
 			if not os.path.exists('disk.rrd'):
 				# disk_db
-				rrdtool.create('disk.rrd','--step','60','--start',cur_time,
-					'DS:disk_total:GAUGE:120:U:U',
-					'DS:disk_free:GAUGE:120:U:U',
-					'DS:disk_used:GAUGE:120:U:U',
-					'DS:disk_percnet:GAUGE:120:U:U',
-					'RRA:LAST:0.5:1:120',
-					'RRA:AVERAGE:0.5:5:120',
-					'RRA:MAX:0.5:5:120',
-					'RRA:MIN:0.5:5:120')
+				rrdtool.create('disk.rrd','--step','300','--start',cur_time,
+					'DS:disk_total:GAUGE:600:U:U',
+					'DS:disk_free:GAUGE:600:U:U',
+					'DS:disk_used:GAUGE:600:U:U',
+					'DS:disk_percnet:GAUGE:600:U:U',
+       					'RRA:LAST:0.5:1:600',
+       					'RRA:LAST:0.5:6:700',
+       					'RRA:LAST:0.5:24:775',
+       					'RRA:LAST:0.5:288:797',
+       					'RRA:MAX:0.5:1:600',
+       					'RRA:MAX:0.5:6:700',
+       					'RRA:MAX:0.5:24:775',
+       					'RRA:MAX:0.5:288:797',
+       					'RRA:MIN:0.5:1:600',
+       					'RRA:MIN:0.5:6:700',
+       					'RRA:MIN:0.5:24:775',
+       					'RRA:MIN:0.5:288:797',
+       					'RRA:AVERAGE:0.5:1:600',
+       					'RRA:AVERAGE:0.5:6:700',
+       					'RRA:AVERAGE:0.5:24:775',
+       					'RRA:AVERAGE:0.5:288:797')
     def rrdb_update(self):
 	"""
 	2.插入rrdtool所需的数据
@@ -134,6 +179,10 @@ class graph_rrdtool:
 	#	and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
 	sql_nic = "select Host_ip,Time,Network_traffic_recv,Network_traffic_sent from report_list \
 		where Time > date_sub(now(),interval 5 MINUTE) and Time< now();"
+	self.cpu_rrd(sql_cpu)
+	#self.nic_rrd(sql_nic)
+	#self.mem_rrd(sql_mem)
+	#self.disk_rrd(sql_disk)
     #####################cpu########################################### 
     def cpu_rrd(self,sql_cpu):
 	# mysql configure
@@ -158,13 +207,18 @@ class graph_rrdtool:
 		b = str(int(time.mktime(timeArray)))
 		c = str(row[2])
 		cpu_percent = [a,b,c]
+		#print cpu_percent[0]
 		for j in list(host.split(',')):
+			#print cpu_percent[1],cpu_percent[2]
 			if j == cpu_percent[0] :
-				print report_dir
+			#	print report_dir
 				os.chdir(report_dir)
 				os.chdir(j)
+			#	print type(cpu_percent[1]) 
+			#	print type(cpu_percent[2])
 				db = rrdtool.updatev('cpu.rrd','%s:%s' % (cpu_percent[1],cpu_percent[2]))
 				print db
+				time.sleep(5)
 				print os.getcwd()
 				print "cpu.rrd"
     #####################network########################################### 
@@ -196,8 +250,10 @@ class graph_rrdtool:
 			if j == nic_list[0] :
 				os.chdir(report_dir)
 				os.chdir(j)
+				print nic_list
 				db = rrdtool.updatev('nic.rrd','%s:%s:%s' % (nic_list[1],nic_list[2],
 					nic_list[3]))
+				time.sleep(1)
 				print db
 				print os.getcwd()
 				print "nic.rrd"	
@@ -236,6 +292,7 @@ class graph_rrdtool:
 				db = rrdtool.updatev('disk.rrd','%s:%s:%s:%s:%s' % (disk_list[1],
 					disk_list[2],disk_list[3],disk_list[4],disk_list[5]))
 				print db
+				time.sleep(1)
 				print os.getcwd()
 				print "disk.rrd"
     #####################mem########################################### 
@@ -280,6 +337,7 @@ class graph_rrdtool:
 					mem_list[2],mem_list[3],mem_list[4],mem_list[5],mem_list[6],
 					mem_list[7],mem_list[8],mem_list[9]))
 				print db
+				time.sleep(1)
 				print os.getcwd()
 				print "mem.rrd"
 
@@ -297,4 +355,14 @@ class graph_rrdtool:
             'GPRINT:bytes_in:LAST:LAST in traffic\: %6.2lf %Sbps',
             'COMMENT:  ',
             'GPRINT:bytes_out:LAST:LAST out traffic\: %6.2lf %Sbps')  
+
+def main(argv=sys.argv[1:]):
+	t = report.graph_rrdtool(argv)
+	while True:
+		t.rrdb()
+		t.rrdb_update()
+		time.sleep(300)
+		continue
+if __name__ == "__main__":
+	sys.exit(main(sys.argv[1:]))
 

@@ -32,7 +32,7 @@ class graph_rrdtool:
 	self.graph_network = cnf.graph_network()
         self.graph = graph
         self.title = title
-	# sql 
+	# sql
 	self.host = cnf.sql_host()
 	self.user = cnf.sql_user()
 	self.password = cnf.sql_password()
@@ -42,8 +42,8 @@ class graph_rrdtool:
         """
         1.创建rrdtool的数据库.
         """
-        #cur_time = str(int(time.time())) 
-        cur_time = '1417652469' 
+        #cur_time = str(int(time.time()))
+        cur_time = '1417652469'
 	host = self.rrdtool_host
 	#print host
 	report_dir = self.rrdtool_dir
@@ -180,10 +180,10 @@ class graph_rrdtool:
 	sql_nic = "select Host_ip,Time,Network_traffic_recv,Network_traffic_sent from report_list \
 		where Time > date_sub(now(),interval 5 MINUTE) and Time< now();"
 	self.cpu_rrd(sql_cpu)
-	#self.nic_rrd(sql_nic)
-	#self.mem_rrd(sql_mem)
-	#self.disk_rrd(sql_disk)
-    #####################cpu########################################### 
+	self.nic_rrd(sql_nic)
+	self.mem_rrd(sql_mem)
+	self.disk_rrd(sql_disk)
+    #####################cpu###########################################
     def cpu_rrd(self,sql_cpu):
 	# mysql configure
 	host_sql = self.host
@@ -214,14 +214,14 @@ class graph_rrdtool:
 			#	print report_dir
 				os.chdir(report_dir)
 				os.chdir(j)
-			#	print type(cpu_percent[1]) 
+			#	print type(cpu_percent[1])
 			#	print type(cpu_percent[2])
 				db = rrdtool.updatev('cpu.rrd','%s:%s' % (cpu_percent[1],cpu_percent[2]))
 				print db
-				time.sleep(1)
+				time.sleep(5)
 				print os.getcwd()
 				print "cpu.rrd"
-    #####################network########################################### 
+    #####################network###########################################
     def nic_rrd(self,sql_nic):
 	# mysql configure
 	host_sql = self.host
@@ -256,9 +256,9 @@ class graph_rrdtool:
 				time.sleep(1)
 				print db
 				print os.getcwd()
-				print "nic.rrd"	
-			   
-    #####################disk########################################### 
+				print "nic.rrd"
+
+    #####################disk###########################################
     def disk_rrd(self,sql_disk):
 	# mysql configure
 	host_sql = self.host
@@ -281,7 +281,7 @@ class graph_rrdtool:
 		timeArray = time.strptime(g, "%Y-%m-%d %H:%M:%S")
 		b = str(int(time.mktime(timeArray)))
 		c = str(row[2])
-		d = str(row[3])	
+		d = str(row[3])
 		e = str(row[4])
 		f = str(row[5])
 		disk_list = [a,b,c,d,e,f]
@@ -295,7 +295,7 @@ class graph_rrdtool:
 				time.sleep(1)
 				print os.getcwd()
 				print "disk.rrd"
-    #####################mem########################################### 
+    #####################mem###########################################
     def mem_rrd(self,sql_mem):
 	# mysql configure
 	host_sql = self.host
@@ -354,5 +354,15 @@ class graph_rrdtool:
             'COMMENT:\\n',
             'GPRINT:bytes_in:LAST:LAST in traffic\: %6.2lf %Sbps',
             'COMMENT:  ',
-            'GPRINT:bytes_out:LAST:LAST out traffic\: %6.2lf %Sbps')  
+            'GPRINT:bytes_out:LAST:LAST out traffic\: %6.2lf %Sbps')
+
+def main(argv=sys.argv[1:]):
+	t = graph_rrdtool(argv)
+	while True:
+		t.rrdb()
+		t.rrdb_update()
+		time.sleep(300)
+		continue
+if __name__ == "__main__":
+	sys.exit(main(sys.argv[1:]))
 
