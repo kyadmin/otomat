@@ -12,7 +12,7 @@ class Monitor_systeminfo:
     def Mem_info(self):
         mem = psutil.virtual_memory()
         return mem
-    def Swap_info(self): 
+    def Swap_info(self):
 	swap = psutil.swap_memory()
         return swap
     def Cpu_Percent(self):
@@ -36,3 +36,6 @@ class Monitor_systeminfo:
                      s.fileno(),0x8915,  # SIOCGIFADDR
                     struct.pack('256s', ifname[:15])
          )[20:24])
+    #def get_ip_address(self):
+    #    s = socket.gethostbyname_ex(socket.gethostname())
+    #    return s[2]

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- encoding: utf-8 -*-
 
-import os
+import os,re
 import time
 import sys
 import StringIO
@@ -11,7 +11,15 @@ from otomat.conf import conf
 from otomat.collection import systemmonitor
 
 #
-
+def os_release_ubuntu():
+        s = os.uname()[3]
+        a = re.search("Ubuntu",s)
+        return a.group()
+def os_release_centos():
+        s = []
+        f = open('/etc/redhat-release')
+        s = f.read()
+        return s.split()[0]
 
 class active_agent:
 	def __init__(self, filename = '/etc/otomat/otomat.cnf'):
@@ -37,7 +45,6 @@ class active_agent:
 			continue
 
 	def transnit_data(self):
-		global cnf
 		data = {}
 		collect = systemmonitor.Monitor_systeminfo()
 		# cpu
@@ -57,12 +64,19 @@ class active_agent:
 		disk_used = collect.disk_usage().used
 		disk_percent = collect.disk_usage().percent
 		# network nic I/O
-		network_recv = collect.nic_io_centos().bytes_recv
-		network_sent = collect.nic_io_centos().bytes_sent
+                if os_release_ubuntu() == "Ubuntu" :
+		        network_recv = collect.nic_io_ubuntu().bytes_recv
+		        network_sent = collect.nic_io_ubuntu().bytes_sent
+                elif os_release_centos() == "Centos":
+		        network_recv = collect.nic_io_centos().bytes_recv
+		        network_sent = collect.nic_io_centos().bytes_sent
+                else:
+                        pass
 		# hostname and ipaddress
 		host = collect.hostname()
 		ifname = self.client_nic
-		ip_address = collect.get_ip_address(ifname)
+		#ip_address = collect.get_ip_address(ifname)
+		ip_address = '172.16.209.243'
 		#
 		L1 = ['cpu_percent','mem_total','mem_free','mem_used',
 			'mem_percent','swap_total','swap_free','swap_used',

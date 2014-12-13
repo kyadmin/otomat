@@ -1,7 +1,7 @@
 [server]
-host = 172.24.0.2
+host = 172.16.209.110
 port = 18888
-my_ip = 172.24.0.2
+my_ip = 172.16.209.110
 #report_path = /etc/otomat/report
 worker = 5
 [sql]
@@ -26,5 +26,5 @@ network = nic.png
 [client]
 host = 172.16.209.243
 port = 18889
-nic = eth0
+nic = p2p1
 my_ip = 172.16.209.243
