@@ -2,9 +2,9 @@
 #-*- encoding: utf-8 -*-
 import logging
 import logging.config
+import os,re
 
-
-logging.config.fileConfig('logger.conf')  #Using the configuration file
+logging.config.fileConfig('logging.conf')  #Using the configuration file
 
 
 root_logger = logging.getLogger('root')
