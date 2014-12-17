@@ -47,6 +47,18 @@ class files_conf_check:
         def server_worker(self):
                 s_worker = self.conf.get("server","worker")
                 return s_worker
+        def server_log(self):
+                s_log = self.conf.get("server","server_log")
+                return s_log
+        def report_log(self):
+                r_log = self.conf.get("server","report_log")
+                return r_log
+        def email_log(self):
+                e_log = self.conf.get("server","email_log")
+                return e_log
+        def server_logdir(self):
+                s_logdir = self.conf.get("server","log_dir")
+                return s_logdir
         #  mysql database  configure
 	def sql_host(self):
                 sql_host = self.conf.get("sql","host")
@@ -102,3 +114,9 @@ class files_conf_check:
         def  nic_port(self):
                 n_port = self.conf.get("client","nic")
                 return n_port
+        def client_log(self):
+                c_log = self.conf.get("client","log")
+                return c_log
+        def client_logdir(self):
+                c_logdir = self.conf.get("client","log_dir")
+                return c_logdir

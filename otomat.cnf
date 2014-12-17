@@ -4,6 +4,10 @@ port = 18888
 my_ip = 172.16.209.110
 #report_path = /etc/otomat/report
 worker = 5
+log_dir = /var/log/otomat-server
+server_log = otomat-server.log
+report_log = otomat-report/otomat-report.log
+email_log = email.log
 [sql]
 host = 172.24.0.2
 user = otomat
@@ -24,7 +28,9 @@ network = nic.png
 
 
 [client]
-host = 172.16.209.243
+log_dir = /var/log/otomat-agent
+log = otomat-agent.log
 port = 18889
-nic = p2p1
-my_ip = 172.16.209.243
+nic = eth0
+
+

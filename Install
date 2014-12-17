@@ -60,7 +60,7 @@ if [ "$#" = "1" ];then
 	   fi
             ;;
         client)
-	   if [ "$system_release" = "Centos" ];then
+	   if [ "$system_release" = "CentOS" ];then
     	    Python_Path="/usr/lib/python2.6/site-packages"
     	    #
     	    cp -arp ../otomat  $Python_Path

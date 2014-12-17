@@ -15,15 +15,15 @@ configs=(
     "/etc/otomat/otomat.cnf" 
 )
 pidfile="/var/run/$prog/$prog.pid"
-logfile="/var/log/$prog/agent.log"
+#logfile="/var/log/$prog/otomat-agent.log"
 
-if [ ! -d /var/run/$prog ];then
-   mkdir /var/run/$prog
-elif [ ! -d /var/log/$prog ];then
-   mkdir /var/log/$prog
-elif [ ! -f $logfile ];then
-    touch $logfile
-fi
+#if [ ! -d /var/run/$prog ];then
+#   mkdir /var/run/$prog
+#elif [ ! -d /var/log/$prog ];then
+#   mkdir /var/log/$prog
+#elif [ ! -f $logfile ];then
+#    touch $logfile
+#fi
 
 
 
@@ -35,7 +35,7 @@ start() {
         [ -f $config ] || exit 6
     done
     echo -n $"Starting $prog: "
-    daemon  --pidfile $pidfile "$exec ${configs[@]/#/--config-file } --log-file $logfile &>/dev/null & echo \$! > $pidfile"
+    daemon  --pidfile $pidfile "$exec ${configs[@]/#/--config-file } &>/dev/null & echo \$! > $pidfile"
     retval=$?
     echo
     [ $retval -eq 0 ] && touch $lockfile
