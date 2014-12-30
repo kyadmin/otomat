@@ -6,7 +6,7 @@ my_ip = 172.16.209.110
 worker = 5
 log_dir = /var/log/otomat-server
 server_log = otomat-server.log
-report_log = otomat-report/otomat-report.log
+report_log = otomat-report.log
 email_log = email.log
 [sql]
 host = 172.24.0.2

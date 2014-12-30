@@ -53,6 +53,7 @@ class active_agent:
 				s.connect((self.host,int(self.port)))
 				logging.info(("Otomat agent started"))
     				s.sendall(data)
+    				logging.debug(data)
 				#print data
 				#data = "#" * 1024
 				buf = s.recv(8092)

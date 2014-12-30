@@ -11,9 +11,20 @@ from otomat.conf import conf
 from threading import *
 from Queue import Queue
 from otomat.sql import otomat_sql
-#
+from  otomat.debug  import log as logging
 queue=Queue() #create queue
 #
+cnf =conf.files_conf_check('/etc/otomat/otomat.cnf')
+logfile = cnf.server_log()
+logdir = cnf.server_logdir()
+
+if not os.path.exists(logdir):
+        os.makedirs(logdir,0o755)
+
+os.chdir(logdir)
+logging.set_logger(filename =logfile, mode = 'a')
+
+
 '''
 class recive_report:
 	def __init__(self,report_file = "/tmp/report",filename = None,data= None):
@@ -53,9 +64,9 @@ class active_server:
 		#self.sem = Semaphore(0)
 	def  handleconnection(self,clientconn):
 		"""handle an incoming connection."""
-		print "Received new Client connection."
+		logging.info("Received new Client connection.",clientconn.getpeername())
 		try:
-			print "Got connection from", clientconn.getpeername()
+			logging.debug("Got connection from", clientconn.getpeername())
 			if (active_count()-1) >= self.MaxThreads:
 				clientconn.close()
 				return
@@ -65,11 +76,14 @@ class active_server:
 			while True:
 				data = clientconn.recv(4096)
 				if  not len(data):
+					logging.warnings("Did not receive the client data!")
 					break
+
 				clientconn.sendall(data)
 				recv_data = eval(data)
 				#print   data
 				print recv_data
+				logging.debug(data)
 				self.pysql(recv_data)
 		except (KeyboardInterrupt, SystemExit):
 			raise
@@ -86,7 +100,7 @@ class active_server:
 	def  startthread(self):
 		# Called by handleconnection when a new thread is need.
 		# Note:lockpool is already acquired when this fuction is called.
-		print "Starting netw Client processor thread."
+		logging.info("Starting netw Client processor thread.")
 		global queue
 		threads = []
 		pool = self.MaxThreads
@@ -158,12 +172,16 @@ class active_server:
 		s.bind((self.host,int(self.port)))
 		s.listen(5)
 		while True:
+			logging.info("The otomat-server has been launched successfully ")
 			try:
 				clientconn, clientaddr = s.accept()
 			except (KeyboardInterrupt,SystemError):
 				raise
+				logging.error("The otomat-server start  failure")
 			except:
 				traceback.print_exc()
+				logging.error(trackback.print_exc())
+				logging.error("The otomat-server start  failure")
 				continue
 			self.handleconnection(clientconn)
 
