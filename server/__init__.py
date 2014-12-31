@@ -64,9 +64,9 @@ class active_server:
 		#self.sem = Semaphore(0)
 	def  handleconnection(self,clientconn):
 		"""handle an incoming connection."""
-		logging.info("Received new Client connection.",clientconn.getpeername())
+		logging.info("Received new Client %s connection.",  clientconn.getpeername())
 		try:
-			logging.debug("Got connection from", clientconn.getpeername())
+			logging.debug("Got connection from %s",  clientconn.getpeername())
 			if (active_count()-1) >= self.MaxThreads:
 				clientconn.close()
 				return
@@ -76,7 +76,7 @@ class active_server:
 			while True:
 				data = clientconn.recv(4096)
 				if  not len(data):
-					logging.warnings("Did not receive the client data!")
+					logging.warning(("Did not receive the client data!"))
 					break
 
 				clientconn.sendall(data)
@@ -100,7 +100,7 @@ class active_server:
 	def  startthread(self):
 		# Called by handleconnection when a new thread is need.
 		# Note:lockpool is already acquired when this fuction is called.
-		logging.info("Starting netw Client processor thread.")
+		logging.info(("Starting netw Client processor thread."))
 		global queue
 		threads = []
 		pool = self.MaxThreads
@@ -171,17 +171,17 @@ class active_server:
 		s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
 		s.bind((self.host,int(self.port)))
 		s.listen(5)
+		logging.info(("The otomat-server has been launched successfully "))
 		while True:
-			logging.info("The otomat-server has been launched successfully ")
 			try:
 				clientconn, clientaddr = s.accept()
 			except (KeyboardInterrupt,SystemError):
 				raise
-				logging.error("The otomat-server start  failure")
+				logging.error(("The otomat-server start  failure"))
 			except:
 				traceback.print_exc()
 				logging.error(trackback.print_exc())
-				logging.error("The otomat-server start  failure")
+				logging.error(("The otomat-server start  failure"))
 				continue
 			self.handleconnection(clientconn)
 

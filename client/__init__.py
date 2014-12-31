@@ -48,10 +48,11 @@ class active_agent:
 	def  handleconnection(self):
 		try:
 			data = str(self.transnit_data())
+			logging.info(("Otomat agent started Successfully!"))
 			while True:
                			s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 				s.connect((self.host,int(self.port)))
-				logging.info(("Otomat agent started"))
+				logging.info(("Otomat agent has been successfully connected to the server!!"))
     				s.sendall(data)
     				logging.debug(data)
 				#print data

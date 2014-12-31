@@ -88,6 +88,9 @@ class files_conf_check:
         def rrdtool_nic(self):
                 rrdtool_nic = self.conf.get("rrdtool","network")
                 return rrdtool_nic
+        def rrdtool_dir(self):
+                rrdtool_dir = self.conf.get("rrdtool","dir")
+                return rrdtool_dir
 	# graph configure
         def graph_cpu(self):
                 graph_cpu = self.conf.get("graph","cpu")

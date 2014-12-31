@@ -7,6 +7,18 @@ import random
 import time
 import MySQLdb
 from otomat.conf import conf
+from  otomat.debug  import log as logging
+
+cnf =conf.files_conf_check('/etc/otomat/otomat.cnf')
+logfile = cnf.report_log()
+logdir = cnf.server_logdir()
+
+if not os.path.exists(logdir):
+        os.makedirs(logdir,0o755)
+
+os.chdir(logdir)
+logging.set_logger(filename =logfile, mode = 'a')
+
 class graph_rrdtool:
     """
     rrdtool 绘图过程一共有四步：
@@ -180,9 +192,13 @@ class graph_rrdtool:
 	sql_nic = "select Host_ip,Time,Network_traffic_recv,Network_traffic_sent from report_list \
 		where Time > date_sub(now(),interval 5 MINUTE) and Time< now();"
 	self.cpu_rrd(sql_cpu)
+	logging.debug(self.cpu_rrd(sql_cpu))
 	self.nic_rrd(sql_nic)
+	logging.debug(self.nic_rrd(sql_nic))
 	self.mem_rrd(sql_mem)
+	logging.debug(self.mem_rrd(sql_mem))
 	self.disk_rrd(sql_disk)
+	logging.debug(self.disk_rrd(sql_disk))
     #####################cpu###########################################
     def cpu_rrd(self,sql_cpu):
 	# mysql configure
@@ -358,6 +374,7 @@ class graph_rrdtool:
 
 def main(argv=sys.argv[1:]):
 	t = graph_rrdtool(argv)
+	logging.info(("The otomat-report-server has been launched successfully !!!"))
 	while True:
 		t.rrdb()
 		t.rrdb_update()

@@ -11,10 +11,20 @@ from otomat.conf import conf
 from threading import *
 from Queue import Queue
 from otomat.sql import otomat_sql
-from otomat.rrdtool import report
+from  otomat.debug  import log as logging
+queue=Queue() #create queue
 #
-queue=Queue() #create queue 
-#
+cnf =conf.files_conf_check('/etc/otomat/otomat.cnf')
+logfile = cnf.server_log()
+logdir = cnf.server_logdir()
+
+if not os.path.exists(logdir):
+        os.makedirs(logdir,0o755)
+
+os.chdir(logdir)
+logging.set_logger(filename =logfile, mode = 'a')
+
+
 '''
 class recive_report:
 	def __init__(self,report_file = "/tmp/report",filename = None,data= None):
@@ -54,9 +64,9 @@ class active_server:
 		#self.sem = Semaphore(0)
 	def  handleconnection(self,clientconn):
 		"""handle an incoming connection."""
-		print "Received new Client connection."
+		logging.info("Received new Client connection.",clientconn.getpeername())
 		try:
-			print "Got connection from", clientconn.getpeername()
+			logging.debug("Got connection from", clientconn.getpeername())
 			if (active_count()-1) >= self.MaxThreads:
 				clientconn.close()
 				return
@@ -66,11 +76,14 @@ class active_server:
 			while True:
 				data = clientconn.recv(4096)
 				if  not len(data):
+					logging.warnings("Did not receive the client data!")
 					break
+
 				clientconn.sendall(data)
 				recv_data = eval(data)
 				#print   data
 				print recv_data
+				logging.debug(data)
 				self.pysql(recv_data)
 		except (KeyboardInterrupt, SystemExit):
 			raise
@@ -87,20 +100,20 @@ class active_server:
 	def  startthread(self):
 		# Called by handleconnection when a new thread is need.
 		# Note:lockpool is already acquired when this fuction is called.
-		print "Starting netw Client processor thread."
+		logging.info("Starting netw Client processor thread.")
 		global queue
 		threads = []
 		pool = self.MaxThreads
 		t = Thread(target = self.handleconnection(),args = (clientconn,queue))
 		for x in xrange(1, pool+1):
 			threads.append(t)
-		for i in threads: 
+		for i in threads:
 			t.setDaemon(1)
 			t.start()
 			#time.sleep(0.1)
 		#queue.join()
        	# write data for file
-	""" 
+	"""
 	def  report(self,data):
 
 	        f = open('/tmp/report',"ab")
@@ -126,7 +139,7 @@ class active_server:
 			Swap_percent,Disk_total,Disk_used,Disk_free,Disk_percent,\
 			Network_traffic_recv,Network_traffic_sent) value (\
 			%s,%s,(NOW()),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
- 
+
 		#args = [('client','172.16.209.219','0.0','1036570','389505024L',
 		#	'647065600L','15.300000000000001','2080370688L','2080370688L',
 		#	'0L','0.0','30414569','2494730240','47665602560',
@@ -152,30 +165,27 @@ class active_server:
 			mem_used,mem_percent,swap_total,swap_free,swap_used,
 			swap_percent,disk_total,disk_used,disk_free,disk_percent,
 			nic_recv,nic_sent)]
-		mysql.execute(sqltext,args,mode=otomat_sql.DICTCURSOR_MODE)	
+		mysql.execute(sqltext,args,mode=otomat_sql.DICTCURSOR_MODE)
 	def listener(self):
                 s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
 		s.bind((self.host,int(self.port)))
 		s.listen(5)
 		while True:
+			logging.info("The otomat-server has been launched successfully ")
 			try:
 				clientconn, clientaddr = s.accept()
 			except (KeyboardInterrupt,SystemError):
 				raise
+				logging.error("The otomat-server start  failure")
 			except:
 				traceback.print_exc()
+				logging.error(trackback.print_exc())
+				logging.error("The otomat-server start  failure")
 				continue
 			self.handleconnection(clientconn)
 
 
-def rrdtool_rport(f):
-	t2 = report.graph_rrdtool(f)
-	t2.rrdb()
-	while True:
-		t2.rrdb_insert()
-		time.sleep(3600)
-                continue
 
 
 #if __name__=="__main__":
@@ -189,7 +199,6 @@ def rrdtool_rport(f):
 def main(argv=sys.argv[1:]):
 	t1 = active_server(argv)
 	t1.listener()
-	rrdtool_rport(argv)
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
 
