@@ -125,7 +125,6 @@ class active_agent:
 
 
 
-
 #if __name__=="__main__":
 
 #	t = active_agent()
