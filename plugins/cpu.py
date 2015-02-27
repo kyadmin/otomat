@@ -46,5 +46,6 @@ def cpu_idle():
 	cmd = "iostat -c 1 3 |grep -v -e '^[a-z]' -e '^[A-Z]' -e '^$'|awk 'BEGIN{sum=0}{sum +=$6/3}END{print sum}'"
 	cpu_idle = shell.shell_cmd(cmd)
 	return cpu_idle
+# 
 
 

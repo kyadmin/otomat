@@ -4,17 +4,20 @@
 import os,re
 import time
 import sys
-import StringIO
+#import StringIO
 import socket
-import pickle
-from otomat.conf import conf
-from otomat.collection import systemmonitor
-from otomat.debug import log as logging
+#import pickle
+from otomat.conf  import  conf  
+from otomat.plugins import cpu
+from otomat.plugins import disk
+from otomat.plugins import mem
+from otomat.plugins import network
+from otomat.logs import log as logging
 
 
-cnf =conf.files_conf_check('/etc/otomat/otomat.cnf')
-logfile = cnf.client_log()
-logdir = cnf.client_logdir()
+config = conf.otomat_conf('/etc/otomat/otomat.cnf')
+logfile = config.client_log()
+logdir = config.client_logdir()
 if not os.path.exists(logdir):
 	os.makedirs(logdir,0o755)
 #print logfile
@@ -24,7 +27,7 @@ logging.set_logger(filename =logfile, mode = 'a')
 
 #
 def os_release():
-        s = []
+       s = []
 	f = open ('/etc/issue')
 	s = f.read()
 	return s.split()[0]
@@ -38,10 +41,10 @@ def os_release_centos():
 class active_agent:
 	def __init__(self, filename = '/etc/otomat/otomat.cnf'):
 		self.filename = filename
-		cnf = conf.files_conf_check(self.filename)
-		self.port = cnf.server_port()
-		self.host = cnf.server_ip()
-		self.client_nic = cnf.nic_port()
+		config = conf.files_conf_check(self.filename)
+		self.port = config.server_port()
+		self.host = config.server_ip()
+		self.client_nic = config1.nic_port()
 		#print self.port
 		#print self.host
 
@@ -50,7 +53,7 @@ class active_agent:
 			data = str(self.transnit_data())
 			logging.info(("Otomat agent started Successfully!"))
 			while True:
-               			s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+               		s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 				s.connect((self.host,int(self.port)))
 				logging.info(("Otomat agent has been successfully connected to the server!!"))
     				s.sendall(data)
@@ -70,33 +73,46 @@ class active_agent:
 
 	def transnit_data(self):
 		data = {}
-		collect = systemmonitor.Monitor_systeminfo()
 		# cpu
-		cpu_percent = collect.Cpu_Percent()
+		cpu_loadavg = cpu.cpu_loadavg()
+		cpu_user = cpu.cpu_user()
+		cpu_nice = cpu.cpu_nice()
+		cpu_system = cpu.cpu_system()
+		cpu_iowait = cpu.cpu_iowait()
+		cpu_steal = cpu.cpu_steal()
+		cpu_idle = cpu_idle()
 		# mem
-		mem_total = collect.Mem_info().total
-		mem_free = collect.Mem_info().free
-		mem_used = collect.Mem_info().used
-		mem_percent = collect.Mem_info().percent
-		swap_total = collect.Swap_info().total
-		swap_free = collect.Swap_info().free
-		swap_used = collect.Swap_info().used
-		swap_percent = collect.Swap_info().percent
+		mem_total =  mem.mem_total()
+		mem_freed =  mem.mem_freed()
+		mem_used = mem.mem_used()
+		mem_buffers_freed = mem.mem_buffers_freed()
+		mem_buffers_used = mem.mem_buffers_used()
+		mem_used_percent = mem.mem_used_percent()
+		swap_total = mem.swap_total()
+		swap_freed= mem.swap_freed()
+		swap_used = mem.swap_used()
+		swap_used_percent = mem.swap_used_percent()
 		# disk
-		disk_total = collect.disk_usage().total
-		disk_free = collect.disk_usage().free
-		disk_used = collect.disk_usage().used
-		disk_percent = collect.disk_usage().percent
+		disk_total = dsik.disk_total()
+		disk_freed = disk.disk_freed()
+		disk_used = disk.disk_used()
+		disk_used_percent = disk.disk_used_percent()
 		# network nic I/O
+		networktraffic_recv = network.networktraffic_recv()
+		networktraffic_sent = network.networktraffic_sent()
+		networktraffic_recv_error = network.networktraffic_recv_error
+		networktraffic_sent_error = networktraffic_sent_error()
+               '''
                 if os_release() == "Ubuntu" :
 		        network_recv = collect.nic_io_ubuntu().bytes_recv
 		        network_sent = collect.nic_io_ubuntu().bytes_sent
-                elif os_release() == "CentOS":
+                elif os_release() == "CentOS ":
 		        network_recv = collect.nic_io_centos().bytes_recv
 		        network_sent = collect.nic_io_centos().bytes_sent
                 else:
                         pass
 		print network_recv
+		'''
 		# hostname and ipaddress
 		host = collect.hostname()
 		ifname = self.client_nic
