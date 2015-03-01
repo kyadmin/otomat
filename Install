@@ -8,7 +8,20 @@ if [ "$#" = "1" ];then
     chown -R 755 /etc/otomat
     #
     #system_release=`cat /etc/redhat-release|awk '{print $1}' 2> /dev/null`
-    os_release=`cat /etc/issue|awk '{print $1}' 2> /dev/null`
+    os_release()
+    {
+	list=`cat /etc/issue`
+	for i in $list
+	do
+ 	 if [ $i = "CentOS" ];then
+   	  echo "CentOS"
+   	  break
+	 elif [ $i = "Ubuntu" ];then
+   	  echo "Ubuntu"
+   	 break
+ 	fi
+	done
+    }
     server_centos()
     {
          cp Service_scripts/otomat_bin-server /usr/bin/otomat_server
@@ -39,7 +52,7 @@ if [ "$#" = "1" ];then
     }
     case $1 in
       server )
-	   if [ "$os_release" = "CentOS Kernel" ];then
+	   if [ `os_release` = "CentOS Kernel" ];then
     	    Python_Path="/usr/lib/python2.6/site-packages"
     	    #
     	    cp -arp ../otomat  $Python_Path
@@ -47,7 +60,7 @@ if [ "$#" = "1" ];then
     	    source /etc/profile
     	    #
 	        server_centos && exit 0
-	   elif [ "$os_release" = "Ubuntu" ];then
+	   elif [ `os_release` = "Ubuntu" ];then
     	    Python_Path="/usr/lib/python2.7/site-packages"
     	     #
     	    cp -arp ../otomat  $Python_Path
@@ -60,7 +73,7 @@ if [ "$#" = "1" ];then
 	   fi
             ;;
       client)
-	   if [ "$os_release" = "CentOS Kernel" ];then
+	   if [ `os_release` = "CentOS" ];then
     	    Python_Path="/usr/lib/python2.6/site-packages"
     	    #
     	    cp -arp ../otomat  $Python_Path
@@ -68,7 +81,7 @@ if [ "$#" = "1" ];then
     	    source /etc/profile
     	    #
             client_centos  && exit 0
-	   elif [ "$os_release" = "Ubuntu" ];then
+	   elif [ `os_release` = "Ubuntu" ];then
     	    Python_Path="/usr/lib/python2.7/site-packages"
      	    #
     	    cp -arp ../otomat  $Python_Path

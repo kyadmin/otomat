@@ -53,8 +53,8 @@ class active_agent:
     def handleconnection(self):
 		try:
 			data = str(self.transnit_data())
-			#data = 'test'
 			print data
+			#data = 'test'
 			logging.info(("Otomat agent started Successfully!"))
 			while True:
 				s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -90,15 +90,15 @@ class active_agent:
         swap_used = mem.swap_used()
         swap_used_percent = mem.swap_used_percent()
 		# disk  
-        disk_total = disk.disk_total()
+        disk_total = dsik.disk_total()
         disk_freed = disk.disk_freed()
         disk_used = disk.disk_used()
         disk_used_percent = disk.disk_used_percent()
 		# network nic I/O
-        networktraffic_recv = network.nic_traffic_recv()
-        networktraffic_sent = network.nic_traffic_sent()
-        networktraffic_recv_error = network.nic_traffic_recv_err()
-        networktraffic_sent_error = network.nic_traffic_sent_err()
+        networktraffic_recv = network.networktraffic_recv()
+        networktraffic_sent = network.networktraffic_sent()
+        networktraffic_recv_error = network.networktraffic_recv_error()
+        networktraffic_sent_error = network.networktraffic_sent_error()
         '''
         if os_release() == "Ubuntu":
             network_recv = collect.nic_io_ubuntu().bytes_recv
@@ -112,11 +112,11 @@ class active_agent:
         '''
 		# hostname and ipaddress
         host = hostname.hostname_get()
-        #ifname = self.client_nic
-        ip = ip_address.ip_address()
+        ifname = self.client_nic
+        ip_address = ip_address.ip_address(ifname)
 		# login user num
         login_user_name = login_user.login_user_name()
-        login_user_num = login_user.login_user_num()
+        ip_address = login_user.login_user_num()
 		#print ip_address
 		#ip_address = '172.16.209.243'
 		#
@@ -133,7 +133,7 @@ class active_agent:
                 swap_total,swap_freed,swap_used,swap_used_percent,
                 disk_total,disk_freed,disk_used,disk_used_percent,
                 networktraffic_recv,networktraffic_sent,networktraffic_recv_error,
-                networktraffic_sent_error,host,ip,login_user_name,login_user_num]
+                networktraffic_sent_error,host,ip_address,login_user_name,login_user_num]
 
 
         data = dict(zip(L1[::],L2))

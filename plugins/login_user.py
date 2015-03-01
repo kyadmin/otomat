@@ -8,13 +8,16 @@
 # Edit History:
 # 2015-02-21 File created.
 #========================================================================
-
 import sys
 import shell_cmd as shell
 
-# ip address get 
-def ip_address():
-    cmd =  "ifconfig eth0|sed -n '/inet / p'|cut -d : -f2|awk '{print $1}'" 
-    ip = shell.shell_cmd(cmd)
-    ip_address = ip[0].split('\n')
-    return ip_address[0]
+# System  login user name.
+def login_user_name():
+	cmd = "who -uq|sed -n '/[a-z,A-Z]/ p'"
+ 	login_user_name = shell.shell_cmd(cmd)[0].split('\n')[0]
+	return login_user_name
+def login_user_num():
+	cmd = "who -uq|sed -n '/#/ p'|cut -d = -f2"
+	login_user_num = shell.shell_cmd(cmd)[0].split('\n')[0]
+	return login_user_num
+
