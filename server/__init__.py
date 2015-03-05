@@ -10,13 +10,13 @@ import socket
 from otomat.conf import conf
 from threading import *
 from Queue import Queue
-from otomat.sql import otomat_sql
+from otomat.Database import otomat_sql
 from  otomat.debug  import log as logging
 queue=Queue() #create queue
 #
-cnf =conf.files_conf_check('/etc/otomat/otomat.cnf')
-logfile = cnf.server_log()
-logdir = cnf.server_logdir()
+config =conf.files_conf_check('/etc/otomat/otomat.cnf')
+logfile = config.server_log()
+logdir = config.server_logdir()
 
 if not os.path.exists(logdir):
         os.makedirs(logdir,0o755)

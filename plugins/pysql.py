@@ -1,0 +1,95 @@
+#!/usr/bin/python
+#
+#========================================================================
+# Author:Andre
+# Email:yangjunfei2146@gmail.com
+# File Name: 
+# Description:
+# Edit History:
+# 2015-02-21 File created.
+#========================================================================
+import os,sys,time
+from otomat.conf import conf
+from otomat.Database import otomat_sql
+
+recv_data = {'hostname': 'node1', 'swap_freed': '1839', 'cpu_idle': '0', 'cpu_user': '0', 'cpu_loadavg': ' 0.00, 0.00, 0.00', 'mem_used': '765', 'mem_total': '1877', 'networktraffic_recv_error': 0, 'swap_used_percent': '0', 'login_user_num': '6', 'swap_total': '1839', 'networktraffic_recv': 88230149, 'networktraffic_sent': 10030439, 'cpu_steal': '0', 'mem_used_percent': ['40.7565'], 'cpu_nice': '0', 'swap_used': '0', 'networktraffic_sent_error': 0, 'mem_freed': '1111', 'host_ip': '172.24.0.23', 'disk_total': 7092494336, 'mem_buffers_freed': '1758', 'disk_freed': 4906565632, 'cpu_iowait': '0', 'login_user_name': 'root root Test root root root', 'mem_buffers_used': '118', 'cpu_system': '0', 'disk_used_percent': 25.699999999999999, 'disk_used': 1825640448}
+
+def pysql(recv_data):
+    data = recv_data
+    config = conf.otomat_conf('/etc/otomat/otomat.cnf')
+    hostname = config.db_host()
+    username = config.db_user()
+    password = config.db_password()
+    defdata = config.db_defaultdb()
+    mysql = otomat_sql.PyMysql()
+    mysql.newConnection(
+        host=hostname,user=username,
+        passwd=password,defaultdb=defdata)
+    # sqltext cpu,mem,network,disk,login
+    sqltext_cpu = "insert into `cpu` (Hostname,Host_ip,TIME,CPU_Loadvg,CPU_User,CPU_Nice,CPU_System,CPU_Iowait,CPU_Steal,CPU_Idle\
+        ) value (\
+        %s,%s,(NOW()),%s,%s,%s,%s,%s,%s,%s)"
+    sqltext_mem = "insert into `mem` (Hostname,Host_ip,TIME,MEM_total,MEM_freed,MEM_used,\
+        MEM_buffers-freed,MEM_buffers-used,SWAP_total,SWAP_freed,SWAP_used,SWAP_used-Percent\
+        ) value (\
+        %s,%s,(NOW()),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    sqltext_disk = "insert into `disk` (Hostname,Host_ip,TIME,DISK_Total,DISK_Used,DISK_Freed,DISK_Used-Percent\
+        ) value (\
+        %s,%s,(NOW()),%s,%s,%s,%s)"
+    sqltext_netwrok = "insert into `network` (Hostname,Host_ip,TIME,Networktraffic_recv,Networktraffic_recv-err,\
+        Networktraffic_sent,Networktraffic_sent-err) value (\
+        %s,%s,(NOW()),%s,%s,%s,%s)"
+    sqltext_login = "insert into `login_user` (Hostname,Host_ip,TIME,User_num,User_name\
+        ) value (\
+        %s,%s,(NOW()),%s,%s)"
+
+    #args = [('client','172.16.209.219','0.0','1036570','389505024L',
+    #   '647065600L','15.300000000000001','2080370688L','2080370688L',
+    #   '0L','0.0','30414569','2494730240','47665602560',
+    #   '4.7000000000000002','30414569','81069')]
+    hostname = data['hostname']
+    hostip = data['host_ip']
+    cpu_loadavg = str(data['cpu_loadavg'])
+    cpu_user = str(data['cpu_user'])
+    cpu_nice = str(data['cpu_nice'])
+    cpu_system = str(data['cpu_system'])
+    cpu_iowait = str(data['cpu_iowait'])
+    cpu_steal = str(data['cpu_steal'])
+    cpu_idle = str(data['cpu_idle'])
+    mem_total = str(data['mem_total'])
+    mem_freed = str(data['mem_freed'])
+    mem_used = str(data['mem_used'])
+    mem_buffers-used = str(data['mem_buffers_used'])
+    mem_buffers-freed = str(data['mem_buffers_freed'])
+    mem_used-percent = str(data['mem_used_percent'])
+    swap_total = str(data['swap_total'])
+    swap_freed = str(data['swap_free'])
+    swap_used = str(data['swap_used'])
+    swap_used-percent = str(data['swap_used_percent'])
+    disk_total = str(data['disk_total'])
+    disk_used = str(data['disk_used'])
+    disk_freed = str(data['disk_freed'])
+    disk_used-percent = str(data['disk_used_percent'])
+    nic_recv = str(data['networktraffic_recv'])
+    nic_recv-err = str(data['networktraffic_recv_error'])
+    nic_sent = str(data['networktraffic_sent'])
+    nic_sent-err = str(data['networktraffic_sent_error'])
+    user_num = str(data['login_user_name'])
+    user_name = str(data['login_user_num'])
+    ###############################
+    args_cpu = [(hostname,hostip,cpu_loadavg,cpu_user,cpu_nice,cpu_system,
+    cpu_iowait,cpu_steal,cpu_idle)]
+    args_mem = [(hostname,hostip,mem_total,mem_freed,
+    mem_used,mem_buffers-used,mem_buffers-freed,mem_used-percent,
+    swap_total,swap_freed,swap_used,swap_used-percent)]
+    args_disk = [(hostname,hostip,disk_total,disk_used,disk_freed,disk_used-percent)]
+    args_network = [(hostname,hostip,nic_recv,nic_recv-err,nic_sent,nic_sent-err)]
+    args_login = [(hostname,hostip,user_num_name)]
+    #####################################
+    mysql.execute(sqltext_cpu,args_cpu,mode=otomat_sql.DICTCURSOR_MODE)
+    mysql.execute(sqltext_mem,args_mem,mode=otomat_sql.DICTCURSOR_MODE)
+    mysql.execute(sqltext_network,args_network,mode=otomat_sql.DICTCURSOR_MODE)
+    mysql.execute(sqltext_disk,args_disk,mode=otomat_sql.DICTCURSOR_MODE)
+    mysql.execute(sqltext_login,args_login,mode=otomat_sql.DICTCURSOR_MODE)
+
+

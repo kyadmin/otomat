@@ -16,35 +16,111 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `report_list`
+-- Table structure for table `cpu`
 --
 
-DROP TABLE IF EXISTS `report_list`;
+DROP TABLE IF EXISTS `cpu`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `report_list` (
+CREATE TABLE `cpu` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `HostName` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
+  `Hostname` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
   `Host_ip` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
   `Time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `Cpu_Utilization` decimal(6,2) unsigned zerofill DEFAULT NULL,
-  `Mem_total` bigint(6) DEFAULT NULL,
-  `Mem_free` bigint(6) DEFAULT NULL,
-  `Mem_used` bigint(6) DEFAULT NULL,
-  `Mem_percent` decimal(6,2) DEFAULT NULL,
-  `Swap_total` bigint(6) DEFAULT NULL,
-  `Swap_free` bigint(6) DEFAULT NULL,
-  `Swap_used` bigint(6) DEFAULT NULL,
-  `Swap_percent` decimal(6,2) DEFAULT NULL,
-  `Disk_total` bigint(6) DEFAULT NULL,
-  `Disk_used` bigint(6) DEFAULT NULL,
-  `Disk_free` bigint(6) DEFAULT NULL,
-  `Disk_percent` decimal(6,2) DEFAULT NULL,
-  `Network_traffic_recv` bigint(6) DEFAULT NULL,
-  `Network_traffic_sent` bigint(6) DEFAULT NULL,
+  `CPU_Loadavg` bigint(6) DEFAULT NULL,
+  `CPU_User` decimal(6,2) DEFAULT NULL,
+  `CPU_Nice` decimal(6,2) DEFAULT NULL,
+  `CPU_System` decimal(6,2) DEFAULT NULL,
+  `CPU_Iowait` decimal(6,2) DEFAULT NULL,
+  `CPU_Steal` decimal(6,2) DEFAULT NULL,
+  `CPU_Idel` decimal(6,2) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+
+--
+-- Table structure for table `mem`
+--
+
+DROP TABLE IF EXISTS `mem`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mem` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Hostname` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
+  `Host_ip` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
+  `Time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `MEM_Total` bigint(6) DEFAULT NULL,
+  `MEM_Freed` bigint(6) DEFAULT NULL,
+  `MEM_Used` bigint(6) DEFAULT NULL,
+  `MEM_Buffers-Freed` bigint(6) DEFAULT NULL,
+  `MEM_Buffers-Used` bigint(6) DEFAULT NULL,
+  `MEM_Used_Percent` decimal(6,2) DEFAULT NULL,
+  `SWAP_Total` bigint(6) DEFAULT NULL,
+  `SWAP_Freed` bigint(6) DEFAULT NULL,
+  `SWAP_Used` bigint(6) DEFAULT NULL,
+  `SWAP_Used-Percent` decimal(6,2) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `disk`
+--
+
+DROP TABLE IF EXISTS `disk`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `disk` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Hostname` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
+  `Host_ip` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
+  `Time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `DISK_Total` bigint(6) DEFAULT NULL,
+  `DISK_Used` bigint(6) DEFAULT NULL,
+  `DISK_Freed` bigint(6) DEFAULT NULL,
+  `Disk_Used-Percent` decimal(6,2) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `network`
+--
+
+DROP TABLE IF EXISTS `network`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `network` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Hostname` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
+  `Host_ip` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
+  `Time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `Networktraffic_recv` bigint(6) DEFAULT NULL,
+  `Networktraffic_recv-err` bigint(6) DEFAULT NULL,
+  `Networktraffic_sent` bigint(6) DEFAULT NULL,
+  `Networktraffic_sent-err` bigint(6) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `network`
+--
+
+DROP TABLE IF EXISTS `login_user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `login_user` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Hostname` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
+  `Host_ip` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
+  `Time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `User_num` bigint(6) DEFAULT NULL,
+  `User_name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 -- Dump completed on 2014-11-29 20:57:07

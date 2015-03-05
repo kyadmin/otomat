@@ -41,7 +41,7 @@ def mem_buffers_used():
 def mem_used_percent():
 	cmd = "free -m |grep Mem |awk '{printf  $3/$2*100}'"
 	mem_used_percent = shell.shell_cmd(cmd)
-	return mem_used_percent
+	return mem_used_percent[0].split('\n')[0]
 # SWAP Total size.
 def swap_total():
 	cmd = "free -m |grep 'Swap'|awk '{print $2}'" 
