@@ -26,17 +26,17 @@ def pysql(recv_data):
         host=hostname,user=username,
         passwd=password,defaultdb=defdata)
     # sqltext cpu,mem,network,disk,login
-    sqltext_cpu = "insert into `cpu` (Hostname,Host_ip,TIME,CPU_Loadavg,CPU_User,CPU_Nice,CPU_System,CPU_Iowait,CPU_Steal,CPU_Idel\
+    sqltext_cpu = "insert into `cpu` (Hostname,Host_ip,TIME,CPU_Loadvg,CPU_User,CPU_Nice,CPU_System,CPU_Iowait,CPU_Steal,CPU_Idle\
         ) value (\
         %s,%s,(NOW()),%s,%s,%s,%s,%s,%s,%s)"
     sqltext_mem = "insert into `mem` (Hostname,Host_ip,TIME,MEM_Total,MEM_Freed,MEM_Used,\
-        MEM_Buffers_Freed,MEM_Buffers_Used,MEM_Used_Percent,SWAP_Total,SWAP_Freed,SWAP_Used,SWAP_Used_Percent\
+        MEM_Buffers_Freed,MEM_Buffers_Used,SWAP_Total,SWAP_Freed,SWAP_Used,SWAP_Used_Percent\
         ) value (\
         %s,%s,(NOW()),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     sqltext_disk = "insert into `disk` (Hostname,Host_ip,TIME,DISK_Total,DISK_Used,DISK_Freed,DISK_Used_Percent\
         ) value (\
         %s,%s,(NOW()),%s,%s,%s,%s)"
-    sqltext_network = "insert into `network` (Hostname,Host_ip,TIME,Networktraffic_recv,Networktraffic_recv_err,\
+    sqltext_netwrok = "insert into `network` (Hostname,Host_ip,TIME,Networktraffic_recv,Networktraffic_recv_err,\
         Networktraffic_sent,Networktraffic_sent_err) value (\
         %s,%s,(NOW()),%s,%s,%s,%s)"
     sqltext_login = "insert into `login_user` (Hostname,Host_ip,TIME,User_num,User_name\
@@ -92,11 +92,5 @@ def pysql(recv_data):
     mysql.execute(sqltext_network,args_network,mode=otomat_sql.DICTCURSOR_MODE)
     mysql.execute(sqltext_disk,args_disk,mode=otomat_sql.DICTCURSOR_MODE)
     mysql.execute(sqltext_login,args_login,mode=otomat_sql.DICTCURSOR_MODE)
-    '''
-    sqltext_dic = {sqltext_cpu:args_cpu,sqltext_mem:args_mem,sqltext_network:args_network,
-                    sqltext_disk:args_disk,sqltext_login:args_login}
-    for (sqltext,args) in sqltext_dic.items():
-        mysql.execute(sqltext,args,mode=otomat_sql.DICTCURSOR_MODE)
-        time.sleep(0.5)
-    '''
+
 

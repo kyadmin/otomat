@@ -54,13 +54,13 @@ CREATE TABLE `mem` (
   `MEM_Total` bigint(6) DEFAULT NULL,
   `MEM_Freed` bigint(6) DEFAULT NULL,
   `MEM_Used` bigint(6) DEFAULT NULL,
-  `MEM_Buffers-Freed` bigint(6) DEFAULT NULL,
-  `MEM_Buffers-Used` bigint(6) DEFAULT NULL,
+  `MEM_Buffers_Freed` bigint(6) DEFAULT NULL,
+  `MEM_Buffers_Used` bigint(6) DEFAULT NULL,
   `MEM_Used_Percent` decimal(6,2) DEFAULT NULL,
   `SWAP_Total` bigint(6) DEFAULT NULL,
   `SWAP_Freed` bigint(6) DEFAULT NULL,
   `SWAP_Used` bigint(6) DEFAULT NULL,
-  `SWAP_Used-Percent` decimal(6,2) DEFAULT NULL,
+  `SWAP_Used_Percent` decimal(6,2) DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -80,7 +80,7 @@ CREATE TABLE `disk` (
   `DISK_Total` bigint(6) DEFAULT NULL,
   `DISK_Used` bigint(6) DEFAULT NULL,
   `DISK_Freed` bigint(6) DEFAULT NULL,
-  `Disk_Used-Percent` decimal(6,2) DEFAULT NULL,
+  `Disk_Used_Percent` decimal(6,2) DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -98,9 +98,9 @@ CREATE TABLE `network` (
   `Host_ip` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
   `Time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `Networktraffic_recv` bigint(6) DEFAULT NULL,
-  `Networktraffic_recv-err` bigint(6) DEFAULT NULL,
+  `Networktraffic_recv_err` bigint(6) DEFAULT NULL,
   `Networktraffic_sent` bigint(6) DEFAULT NULL,
-  `Networktraffic_sent-err` bigint(6) DEFAULT NULL,
+  `Networktraffic_sent_err` bigint(6) DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

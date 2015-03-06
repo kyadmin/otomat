@@ -10,7 +10,7 @@ import socket
 from otomat.conf import conf
 from threading import *
 from Queue import Queue
-from otomat.Database import otomat_sql
+from otomat.plugins import pysql
 from  otomat.debug  import log as logging
 queue=Queue() #create queue
 #
@@ -76,7 +76,7 @@ class active_server:
 			while True:
 				data = clientconn.recv(4096)
 				if  not len(data):
-					logging.warning(("Did not receive the client data!"))
+					logging.info(("The client data has been received and connection will be disconected!"))
 					break
 
 				clientconn.sendall(data)
@@ -124,50 +124,11 @@ class active_server:
 	        finally:
 		    f.close()
 	"""
-	def  pysql(self,recv_data):
-		data = recv_data
-		hostname = self.sql_host
-		username = self.sql_user
-		password = self.sql_password
-		defdata = self.sql_defdb
-		mysql = otomat_sql.PyMysql()
-		mysql.newConnection(
-			host=hostname,user=username,
-			passwd=password,defaultdb=defdata)
-		sqltext = "insert into `report_list` (HostName,Host_ip,Time,Cpu_Utilization,Mem_total,Mem_free,\
-			Mem_used,Mem_percent,Swap_total,Swap_free,Swap_used,\
-			Swap_percent,Disk_total,Disk_used,Disk_free,Disk_percent,\
-			Network_traffic_recv,Network_traffic_sent) value (\
-			%s,%s,(NOW()),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-
-		#args = [('client','172.16.209.219','0.0','1036570','389505024L',
-		#	'647065600L','15.300000000000001','2080370688L','2080370688L',
-		#	'0L','0.0','30414569','2494730240','47665602560',
-		#	'4.7000000000000002','30414569','81069')]
-		hostname = data['hostname']
-		hostip = data['host_ip']
-		cpu_utilization = str(data['cpu_percent'])
-		mem_total = str(data['mem_total'])
-		mem_free = str(data['mem_free'])
-		mem_used = str(data['mem_used'])
-		mem_percent = str(data['mem_percent'])
-		swap_total = str(data['swap_total'])
-		swap_free = str(data['swap_free'])
-		swap_used = str(data['swap_used'])
-		swap_percent = str(data['swap_percent'])
-		disk_total = str(data['disk_total'])
-		disk_used = str(data['disk_used'])
-		disk_free = str(data['disk_free'])
-		disk_percent = str(data['disk_percent'])
-		nic_recv = str(data['network_recv'])
-		nic_sent = str(data['network_sent'])
-		args = [(hostname,hostip,cpu_utilization,mem_total,mem_free,
-			mem_used,mem_percent,swap_total,swap_free,swap_used,
-			swap_percent,disk_total,disk_used,disk_free,disk_percent,
-			nic_recv,nic_sent)]
-		mysql.execute(sqltext,args,mode=otomat_sql.DICTCURSOR_MODE)
+    def insert_data(self,data)
+        insert = pysql.pysql(data)
+        logging.debug(insert)
 	def listener(self):
-                s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
 		s.bind((self.host,int(self.port)))
 		s.listen(5)
