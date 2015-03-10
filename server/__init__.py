@@ -11,7 +11,7 @@ from otomat.conf import conf
 from threading import *
 from Queue import Queue
 from otomat.plugins import pysql
-from  otomat.debug  import log as logging
+from  otomat.logs  import log as logging
 queue=Queue() #create queue
 #
 config =conf.files_conf_check('/etc/otomat/otomat.cnf')
