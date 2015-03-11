@@ -52,7 +52,7 @@ if [ "$#" = "1" ];then
     }
     case $1 in
       server )
-	   if [ `os_release` = "CentOS Kernel" ];then
+	   if [ `os_release` = "CentOS" ];then
     	    Python_Path="/usr/lib/python2.6/site-packages"
     	    #
     	    cp -arp ../otomat  $Python_Path

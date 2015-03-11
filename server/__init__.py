@@ -14,7 +14,7 @@ from otomat.plugins import pysql
 from  otomat.logs  import log as logging
 queue=Queue() #create queue
 #
-config =conf.files_conf_check('/etc/otomat/otomat.cnf')
+config =conf.otomat_conf('/etc/otomat/otomat.cnf')
 logfile = config.server_log()
 logdir = config.server_logdir()
 
@@ -29,8 +29,8 @@ logging.set_logger(filename =logfile, mode = 'a')
 class recive_report:
 	def __init__(self,report_file = "/tmp/report",filename = None,data= None):
 		#self.filename = filename
-		#cnf = conf.files_conf_check(self.filename)
-		#self.path = cnf.server_report_path()
+		#cnf = conf.otomat_conf(self.filename)
+		#self.path = config.server_report_path()
 		self.report = report_file
 		self.data = data
 	def  report(self):
@@ -50,15 +50,15 @@ class active_server:
 	def __init__(self, filename="otomat.cnf"):
 		#recive_report.__init__(self)
 		self.filename = filename
-		cnf = conf.files_conf_check(self.filename)
-		self.port = cnf.server_port()
-		self.host = cnf.server_ip()
-		self.sql_host = cnf.sql_host()
-		self.sql_user = cnf.sql_user()
-		self.sql_password = cnf.sql_password()
-		self.sql_defdb = cnf.sql_defaultdb()
+		config = conf.otomat_conf(self.filename)
+		self.port = config.server_port()
+		self.host = config.server_host()
+		self.sql_host = config.db_host()
+		self.sql_user = config.db_user()
+		self.sql_password = config.db_password()
+		self.sql_defdb = config.db_defaultdb()
 		#ThreadPool
-		self.MaxThreads = cnf.server_worker()
+		self.MaxThreads = config.server_worker()
 		#self.lockpool = Lock()
 		#self.queue = []
 		#self.sem = Semaphore(0)
@@ -124,11 +124,11 @@ class active_server:
 	        finally:
 		    f.close()
 	"""
-    def insert_data(self,data)
-        insert = pysql.pysql(data)
-        logging.debug(insert)
+    	def insert_data(self,data):
+        	insert = pysql.pysql(data)
+        	logging.debug(insert)
 	def listener(self):
-        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        	s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
 		s.bind((self.host,int(self.port)))
 		s.listen(5)
