@@ -5,7 +5,8 @@ os,time,sys,traceback,socket,threading,Queue,psutil
 
 #Install the rquired environment
 ./Install server/client
-
+#centos
+client: yum -y install python-devel gcc;easy_install psutil 
 # If is the Service side than need to install the MySQL database
 1.ubuntu
 sudo apt-get install mysql-server 

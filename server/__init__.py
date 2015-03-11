@@ -84,7 +84,7 @@ class active_server:
 				#print   data
 				print recv_data
 				logging.debug(data)
-				self.pysql(recv_data)
+				self.insert_data(recv_data)
 		except (KeyboardInterrupt, SystemExit):
 			raise
 		except:
@@ -124,9 +124,11 @@ class active_server:
 	        finally:
 		    f.close()
 	"""
-    	def insert_data(self,data):
+    	def insert_data(self,recv_data):
+		data = recv_data
         	insert = pysql.pysql(data)
         	logging.debug(insert)
+		return insert
 	def listener(self):
         	s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 		s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)

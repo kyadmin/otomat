@@ -24,24 +24,6 @@ def pysql(recv_data):
     defdata = config.db_defaultdb()
     conn = MySQLdb.connect(host=hostname,user=username,passwd=password,db=defdata)
     cursor = conn.cursor()
-    # sqltext cpu,mem,network,disk,login
-    sqltext_cpu = "insert into `cpu` (Hostname,Host_ip,TIME,CPU_Loadavg,CPU_User,CPU_Nice,CPU_System,CPU_Iowait,CPU_Steal,CPU_Idel\
-        ) value (\
-        %s,%s,(NOW()),%s,%s,%s,%s,%s,%s,%s)"
-    sqltext_mem = "insert into `mem` (Hostname,Host_ip,TIME,MEM_Total,MEM_Freed,MEM_Used,\
-        MEM_Buffers_Freed,MEM_Buffers_Used,MEM_Used_Percent,SWAP_Total,SWAP_Freed,SWAP_Used,SWAP_Used_Percent\
-        ) value (\
-        %s,%s,(NOW()),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-    sqltext_disk = "insert into `disk` (Hostname,Host_ip,TIME,DISK_Total,DISK_Used,DISK_Freed,DISK_Used_Percent\
-        ) value (\
-        %s,%s,(NOW()),%s,%s,%s,%s)"
-    sqltext_network = "insert into `network` (Hostname,Host_ip,TIME,Networktraffic_recv,Networktraffic_recv_err,\
-        Networktraffic_sent,Networktraffic_sent_err) value (\
-        %s,%s,(NOW()),%s,%s,%s,%s)"
-    sqltext_login = "insert into `login_user` (Hostname,Host_ip,TIME,User_num,User_name\
-        ) value (\
-        %s,%s,(NOW()),%s,%s)"
-
     #args = [('client','172.16.209.219','0.0','1036570','389505024L',
     #   '647065600L','15.300000000000001','2080370688L','2080370688L',
     #   '0L','0.0','30414569','2494730240','47665602560',
@@ -105,9 +87,6 @@ def pysql(recv_data):
     #   '647065600L','15.300000000000001','2080370688L','2080370688L',
     #   '0L','0.0','30414569','2494730240','47665602560',
     #   '4.7000000000000002','30414569','81069')]
-    hostname = data['hostname']
-    hostip = data['host_ip']
-    cpu_loadavg = str(data['cpu_loadavg'])
     #####################################
     # mysql.execute(sqltext,args,mode=otomat_sql.DICTCURSOR_MODE)
     cursor.execute(sqltext_cpu,args_cpu)

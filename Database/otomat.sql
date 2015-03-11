@@ -27,13 +27,13 @@ CREATE TABLE `cpu` (
   `Hostname` varchar(50) CHARACTER SET utf8 DEFAULT NULL,
   `Host_ip` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
   `Time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  `CPU_Loadavg` bigint(6) DEFAULT NULL,
+  `CPU_Loadavg` varchar(20) DEFAULT NULL,
   `CPU_User` decimal(6,2) DEFAULT NULL,
   `CPU_Nice` decimal(6,2) DEFAULT NULL,
-  `CPU_System` decimal(6,2) DEFAULT NULL,
+  `CPU_System` decimal(8,7) DEFAULT NULL,
   `CPU_Iowait` decimal(6,2) DEFAULT NULL,
   `CPU_Steal` decimal(6,2) DEFAULT NULL,
-  `CPU_Idel` decimal(6,2) DEFAULT NULL,
+  `CPU_Idel` decimal(6,4) DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -56,11 +56,11 @@ CREATE TABLE `mem` (
   `MEM_Used` bigint(6) DEFAULT NULL,
   `MEM_Buffers_Freed` bigint(6) DEFAULT NULL,
   `MEM_Buffers_Used` bigint(6) DEFAULT NULL,
-  `MEM_Used_Percent` decimal(6,2) DEFAULT NULL,
+  `MEM_Used_Percent` decimal(6,4) DEFAULT NULL,
   `SWAP_Total` bigint(6) DEFAULT NULL,
   `SWAP_Freed` bigint(6) DEFAULT NULL,
   `SWAP_Used` bigint(6) DEFAULT NULL,
-  `SWAP_Used_Percent` decimal(6,2) DEFAULT NULL,
+  `SWAP_Used_Percent` decimal(6,4) DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -80,7 +80,7 @@ CREATE TABLE `disk` (
   `DISK_Total` bigint(6) DEFAULT NULL,
   `DISK_Used` bigint(6) DEFAULT NULL,
   `DISK_Freed` bigint(6) DEFAULT NULL,
-  `Disk_Used_Percent` decimal(6,2) DEFAULT NULL,
+  `Disk_Used_Percent` decimal(17,15) DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
