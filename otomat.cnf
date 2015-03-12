@@ -1,5 +1,5 @@
 [server]
-host = 172.16.209.110
+host = 172.24.0.2
 port = 18888
 worker = 5
 log_dir = /var/log/otomat-server
@@ -14,11 +14,12 @@ password = otomat
 defaultdb = otomat
 
 [rrdtool]
-host = 172.16.209.12,172.24.0.21,172.16.209.22,172.16.209.23
+host = 172.24.0.23,172.24.0.27,172.172.0.8,172.172.0.9
 cpu = cpu.rrd
 mem = mem.rrd
 disk = disk.rrd
 network = nic.rrd
+login = login_user.rrd
 dir = /var/lib/otomat
 
 [graph]

@@ -64,6 +64,9 @@ class otomat_conf:
         def rrdtool_dir(self):
                 rrdtool_dir = self.conf.get("rrdtool","dir")
                 return rrdtool_dir
+        def rrdtool_login(self):
+                rrdtool_login = self.conf.get("rrdtool","login")
+                return rrdtool_login
         # graph configure
         def graph_cpu(self):
                 graph_cpu = self.conf.get("graph","cpu")
