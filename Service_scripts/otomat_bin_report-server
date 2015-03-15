@@ -3,7 +3,7 @@
 
 import sys
 
-from otomat.rrdtool_report.report import main
+from otomat.server.report import main
 
 
 if __name__ == "__main__":
