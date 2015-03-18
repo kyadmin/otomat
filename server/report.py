@@ -23,8 +23,9 @@ def main(argv=sys.argv[1:]):
 	logging.info(("The otomat-report-server has been launched successfully !!!"))
 	while True:
 		t.rrdb()
+		t.rrdb()
 		t.rrdb_update()
 		time.sleep(300)
-		continue
 if __name__ == "__main__":
 	sys.exit(main(sys.argv[1:]))
+

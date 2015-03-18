@@ -6,9 +6,11 @@ import rrdtool
 import random
 import time
 import MySQLdb
+import shell_cmd as shell
 from otomat.conf import conf
+from otomat.logs import log as logging
 from MySQLdb import converters
-'''
+
 config =conf.otomat_conf('/etc/otomat/otomat.cnf')
 logfile = config.report_log()
 logdir = config.server_logdir()
@@ -18,7 +20,7 @@ if not os.path.exists(logdir):
 
 os.chdir(logdir)
 logging.set_logger(filename =logfile, mode = 'a')
-'''
+
 class rrdtool_collector:
     """
     rrdtool 绘图过程一共有四步：
@@ -205,7 +207,7 @@ class rrdtool_collector:
 	#	Swap_free,Swap_used,Swap_percent from report_list \
 	#	where Time > date_format(date_sub(now(),interval 1 HOUR),'%Y-%m-%d %H:00:00')  \
 	#	and Time< date_format(now(),'%Y-%m-%d %H:00:00')"
-	sql_mem = "select Host_ip,Time,MEM_Total,MEM_Freed,MEM_Used,MEM_Buffers_Freed,MEM_Buffers_Used,MEM_Used_Percent \
+	sql_mem = "select Host_ip,Time,MEM_Total,MEM_Freed,MEM_Used,MEM_Buffers_Freed,MEM_Buffers_Used,MEM_Used_Percent, \
 		SWAP_Total,SWAP_Freed,SWAP_Used,SWAP_Used_Percent from mem \
 		where Time > date_sub(now(),interval 5 MINUTE) and Time< now();"
 	#sql_disk = "select Host_ip,Time,Disk_total,Disk_free,Disk_used,Disk_percent from report_list \
@@ -219,13 +221,18 @@ class rrdtool_collector:
 	sql_nic = "select Host_ip,Time,Networktraffic_recv,Networktraffic_recv_err,Networktraffic_sent,Networktraffic_sent_err \
 		from network where Time > date_sub(now(),interval 5 MINUTE) and Time< now();"
 	#login_user
-	sql_login = "select Host_ip,Time,User_num,User_name from login_user \
+	sql_login = "select Host_ip,Time,User_num from login_user \
 		where Time > date_sub(now(),interval 5 MINUTE) and Time< now();"
 	self.cpu_rrd(sql_cpu)
+	logging.debug(self.cpu_rrd(sql_cpu))
 	self.nic_rrd(sql_nic)
+	logging.debug(self.nic_rrd(sql_nic))
 	self.mem_rrd(sql_mem)
+	logging.debug(self.mem_rrd(sql_mem))
 	self.disk_rrd(sql_disk)
+	logging.debug(self.disk_rrd(sql_disk))
 	self.login_rrd(sql_login)
+	logging.debug(self.login_rrd(sql_login))
     #####################cpu###########################################
     def cpu_rrd(self,sql_cpu):
 	# mysql configure
@@ -261,7 +268,7 @@ class rrdtool_collector:
 		j = str(row[7])
 		k = str(row[8])
 		#cpu_list = [a,b,c,d,e,f,g,h,i,j,k]
-		#print cpu_list[0]
+		#print cpu_list
 		for ip in list(host.split(',')):
 			#print cpu_list[1],cpu_list[2]
 			if ip == a :
@@ -270,12 +277,16 @@ class rrdtool_collector:
 				os.chdir(ip)
 			#	print type(cpu_list[1])
 			#	print type(cpu_list[2])
-				db = rrdtool.updatev('cpu.rrd','%s:%s:%s:%s:%s:%s:%s:%s:%s' % (c,d,e,f,g,h,i,j,k))
-				print db
-				time.sleep(5)
+				#db = rrdtool.updatev('cpu.rrd','%s:%s:%s:%s:%s:%s:%s:%s:%s:%s' % (b,c,d,e,f,g,h,i,j,k))
+				cmd = '/usr/bin/rrdtool updatev cpu.rrd %s:%s:%s:%s:%s:%s:%s:%s:%s:%s' % (b,c,d,e,f,g,h,i,j,k)
+				db_update = shell.shell_cmd(cmd)
+				print db_update
+				time.sleep(1)
 				print os.getcwd()
 				print "cpu.rrd"
-	conn.close()	
+	
+	conn.close()
+	return db_update	
     #####################network###########################################
     def nic_rrd(self,sql_nic):
 	# mysql configure
@@ -295,7 +306,6 @@ class rrdtool_collector:
 	rows = int(cur.rowcount)
 	for i in xrange(rows):
 		row = cur.fetchone()
-		#print row[0],row[1],row[2]
 		a = str(row[0])
 		g = str(row[1])
 		timeArray = time.strptime(g, "%Y-%m-%d %H:%M:%S")
@@ -305,18 +315,21 @@ class rrdtool_collector:
 		e = str(row[4])
 		f = str(row[5])
 		# nic_list = [a,b,c,d]
+		print "%s %s %s %s %s %s" % (a,b,c,d,e,f)
 		for j in list(host.split(',')):
 			if j == a:
 				os.chdir(report_dir)
 				os.chdir(j)
 				#print nic_list
-				db = rrdtool.updatev('nic.rrd','%s:%s:%s:%s' % (c,d,e,f))
+				#db = rrdtool.updatev('nic.rrd','%s:%s:%s:%s:%s' % (b,c,d,e,f))
+				cmd = '/usr/bin/rrdtool updatev nic.rrd %s:%s:%s:%s:%s' % (b,c,d,e,f)
+				db_update = shell.shell_cmd(cmd)
+				print db_update
 				time.sleep(1)
-				print db
 				print os.getcwd()
 				print "nic.rrd"
 	conn.close()	
-
+	return db_update	
     #####################disk###########################################
     def disk_rrd(self,sql_disk):
 	# mysql configure
@@ -350,12 +363,14 @@ class rrdtool_collector:
 			if j == a :
 				os.chdir(report_dir)
 				os.chdir(j)
-				db = rrdtool.updatev('disk.rrd','%s:%s:%s:%s' % (c,d,e,f))
-				print db
+				cmd = '/usr/bin/rrdtool updatev disk.rrd %s:%s:%s:%s:%s' % (b,c,d,e,f)
+				db_update = shell.shell_cmd(cmd)
+				print db_update
 				time.sleep(1)
 				print os.getcwd()
 				print "disk.rrd"
 	conn.close()	
+	return db_update	
     #####################mem###########################################
     def mem_rrd(self,sql_mem):
 	# mysql configure
@@ -370,12 +385,11 @@ class rrdtool_collector:
 	conv[246] = float # convert decimals to floats
 	conn = MySQLdb.connect(host_sql,user,password,defaultdb,conv=conv)
 	cur = conn.cursor()
-	mem_list = []
+	#mem_list = []
 	cur.execute(sql_mem)
 	rows = int(cur.rowcount)
 	for i in xrange(rows):
 		row = cur.fetchone()
-		#print row[0],row[1],row[2]
 		a = str(row[0])
 		m = str(row[1])
 		timeArray = time.strptime(m, "%Y-%m-%d %H:%M:%S")
@@ -389,21 +403,23 @@ class rrdtool_collector:
 		i = str(row[8])
 		j = str(row[9])
 		k = str(row[10])
-		mem_list = [a,b,c,d,e,f,g,h,k]
-		#print mem_list
+		l = str(row[11])
+		#mem_list = [a,b,c,d,e,f,g,h,k]
+		#print "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s" %(a,b,c,d,e,f,g,h,i,j,k,l)
 		for ip in list(host.split(',')):
 			if ip == a :
 				#print "%s is %s" %(j,mem_list[0])
 				os.chdir(report_dir)
 				os.chdir(ip)
 				#print os.getcwd()
-				db = rrdtool.updatev('mem.rrd','%s:%s:%s:%s:%s:%s:%s:%s:%s' % (c,
-					d,e,f,g,h,i,j,k))
-				print db
+				cmd = '/usr/bin/rrdtool updatev mem.rrd %s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s' % (b,c,d,e,f,g,h,i,j,k,l)
+				db_update = shell.shell_cmd(cmd)
+				print db_update
 				time.sleep(1)
 				print os.getcwd()
 				print "mem.rrd"
 	conn.close()	
+	return db_update	
 
     #####################login_user###########################################
     def login_rrd(self,sql_login):
@@ -430,17 +446,18 @@ class rrdtool_collector:
 		timeArray = time.strptime(e, "%Y-%m-%d %H:%M:%S")
 		b = str(int(time.mktime(timeArray)))
 		c = str(row[2])
-		d = str(row[3])
 		# login_list = [a,b,c,d]
 		for j in list(host.split(',')):
 			if j == a:
 				os.chdir(report_dir)
 				os.chdir(j)
-				#print login_list
-				db = rrdtool.updatev('login_user.rrd','%s:%s' % (c,d))
+				print row
+				cmd = '/usr/bin/rrdtool updatev login_user.rrd %s:%s' % (b,c)
+				db_update = shell.shell_cmd(cmd)
 				time.sleep(1)
-				print db
+				print db_update
 				print os.getcwd()
 				print "nic.rrd"
 	conn.close()	
+	return db_update	
 
