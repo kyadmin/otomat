@@ -50,8 +50,8 @@ class rrdtool_collector:
         """
         1.创建rrdtool的数据库.
         """
-        #cur_time = str(int(time.time()))
-        cur_time = '1417652469'
+        cur_time = str(int(time.time()-3000))
+        #cur_time = '1417652469'
 	host = self.rrdtool_host
 	#print host
 	report_dir = self.rrdtool_dir
@@ -71,26 +71,26 @@ class rrdtool_collector:
 			if not os.path.exists('nic.rrd'):
 				# network_db
 				rrdtool.create('nic.rrd','--step','300','--start',cur_time,
-        				'DS:input:COUNTER:600:U:U',
-        				'DS:output:COUNTER:600:U:U',
-        				'DS:input_err:COUNTER:600:U:U',
-        				'DS:output_err:COUNTER:600:U:U',
+        				'DS:input:COUNTER:600:0:U',
+        				'DS:output:COUNTER:600:0:U',
+        				'DS:input_err:COUNTER:600:0:U',
+        				'DS:output_err:COUNTER:600:0:U',
        					'RRA:LAST:0.5:1:600',
-       					'RRA:LAST:0.5:4:600',
-       					'RRA:LAST:0.5:24:600',
-       					'RRA:LAST:0.5:288:730',
+       					'RRA:LAST:0.5:6:700',
+       					'RRA:LAST:0.5:24:775',
+       					'RRA:LAST:0.5:288:797',
        					'RRA:MAX:0.5:1:600',
-       					'RRA:MAX:0.5:4:600',
-       					'RRA:MAX:0.5:24:600',
-       					'RRA:MAX:0.5:288:730',
+       					'RRA:MAX:0.5:6:700',
+       					'RRA:MAX:0.5:24:775',
+       					'RRA:MAX:0.5:288:797',
        					'RRA:MIN:0.5:1:600',
-       					'RRA:MIN:0.5:4:600',
-       					'RRA:MIN:0.5:24:600',
-       					'RRA:MIN:0.5:288:730',
+       					'RRA:MIN:0.5:6:700',
+       					'RRA:MIN:0.5:24:775',
+       					'RRA:MIN:0.5:288:797',
        					'RRA:AVERAGE:0.5:1:600',
-       					'RRA:AVERAGE:0.5:6:600',
-       					'RRA:AVERAGE:0.5:24:600',
-       					'RRA:AVERAGE:0.5:288:730')
+       					'RRA:AVERAGE:0.5:6:700',
+       					'RRA:AVERAGE:0.5:24:775',
+       					'RRA:AVERAGE:0.5:288:797')
 			if not os.path.exists('cpu.rrd'):
 				# cpu_db
 				rrdtool.create('cpu.rrd','--step','300','--start',cur_time,
@@ -154,7 +154,7 @@ class rrdtool_collector:
 					'DS:disk_total:GAUGE:600:U:U',
 					'DS:disk_freed:GAUGE:600:U:U',
 					'DS:disk_used:GAUGE:600:U:U',
-					'DS:disk_used_percnet:GAUGE:600:U:U',
+					'DS:disk_used_percent:GAUGE:600:U:U',
        					'RRA:LAST:0.5:1:600',
        					'RRA:LAST:0.5:6:700',
        					'RRA:LAST:0.5:24:775',
@@ -174,7 +174,6 @@ class rrdtool_collector:
 			if not os.path.exists('login_user.rrd'):
 				# login_user_db
 				rrdtool.create('login_user.rrd','--step','300','--start',cur_time,
-					'DS:login_user:GAUGE:600:U:U',
 					'DS:login_user_num:GAUGE:600:U:U',
        					'RRA:LAST:0.5:1:600',
        					'RRA:LAST:0.5:6:700',
@@ -235,6 +234,7 @@ class rrdtool_collector:
 	logging.debug(self.login_rrd(sql_login))
     #####################cpu###########################################
     def cpu_rrd(self,sql_cpu):
+	debug = "This is cpu.rrd to perform the debug result :"
 	# mysql configure
 	host_sql = self.host
 	user = self.user
@@ -258,9 +258,9 @@ class rrdtool_collector:
 		l = str(row[1])
 		timeArray = time.strptime(l, "%Y-%m-%d %H:%M:%S")
 		b = str(int(time.mktime(timeArray)))
-		c = row[2].split(',')[0]
-		d = row[2].split(',')[1]
-		e = row[2].split(',')[2]
+		c = row[2].split(',')[0].strip()
+		d = row[2].split(',')[1].strip()
+		e = row[2].split(',')[2].strip()
 		f = str(row[3])
 		g = str(row[4])
 		h = str(row[5])
@@ -286,9 +286,10 @@ class rrdtool_collector:
 				print "cpu.rrd"
 	
 	conn.close()
-	return db_update	
+	return (debug+str(db_update))	
     #####################network###########################################
     def nic_rrd(self,sql_nic):
+	debug = "This is nic.rrd to perform the debug result :"
 	# mysql configure
 	host_sql = self.host
 	user = self.user
@@ -329,9 +330,10 @@ class rrdtool_collector:
 				print os.getcwd()
 				print "nic.rrd"
 	conn.close()	
-	return db_update	
+	return (debug+str(db_update))	
     #####################disk###########################################
     def disk_rrd(self,sql_disk):
+	debug = "This is disk.rrd to perform the debug result :"
 	# mysql configure
 	host_sql = self.host
 	user = self.user
@@ -370,9 +372,10 @@ class rrdtool_collector:
 				print os.getcwd()
 				print "disk.rrd"
 	conn.close()	
-	return db_update	
+	return (debug+str(db_update))	
     #####################mem###########################################
     def mem_rrd(self,sql_mem):
+	debug = "This is mem.rrd to perform the debug result :"
 	# mysql configure
 	host_sql = self.host
 	user = self.user
@@ -419,10 +422,11 @@ class rrdtool_collector:
 				print os.getcwd()
 				print "mem.rrd"
 	conn.close()	
-	return db_update	
+	return (debug+str(db_update))	
 
     #####################login_user###########################################
     def login_rrd(self,sql_login):
+	debug = "This is login.rrd to perform the debug result :"
 	# mysql configure
 	host_sql = self.host
 	user = self.user
@@ -459,5 +463,5 @@ class rrdtool_collector:
 				print os.getcwd()
 				print "nic.rrd"
 	conn.close()	
-	return db_update	
+	return (debug+str(db_update))	
 

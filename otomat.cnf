@@ -27,6 +27,8 @@ cpu = cpu.png
 mem = mem.png
 disk = disk.png
 network = nic.png
+login_user = login_user.png
+graph_dir = /var/lib/otomat-graph
 
 
 [client]
