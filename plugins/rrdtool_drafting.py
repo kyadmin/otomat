@@ -26,7 +26,7 @@ class graph_rrdtool:
     3.更新rrdtool数据库
     4.进行rrdtool绘图。
     """
-    def __init__(self,filename="/etc/otomat/otomat.cnf",start_time="-1d"):
+    def __init__(self,filename="/etc/otomat/otomat.cnf"):
         self.filename = filename
 	config = conf.otomat_conf(self.filename)
 	self.host = config.rrdtool_host()
@@ -39,10 +39,35 @@ class graph_rrdtool:
         self.graph_login = config.graph_login() 
 	self.graph_dir = config.graph_dir()
         #self.time = str(int(time.time()))
-        self.time = start_time
+        #self.time = start_time
 	self.graph_list = [self.graph_cpu,self.graph_mem,self.graph_disk,self.graph_network,self.graph_login]
 	
-    def graph_rrdtool(self):
+    def graph_rrdtool(self,stime):
+	if stime == '-1d':
+		perfix = '1d_'
+		graph_cpu = perfix+self.graph_cpu
+		graph_mem = perfix+self.graph_mem
+		graph_disk = perfix+self.graph_disk
+		graph_network = perfix+self.graph_network
+		graph_login = perfix+self.graph_login
+		 
+	elif stime == '-1w':
+		perfix = '1w_'
+		graph_cpu = perfix+self.graph_cpu
+		graph_mem = perfix+self.graph_mem
+		graph_disk = perfix+self.graph_disk
+		graph_network = perfix+self.graph_network
+		graph_login = perfix+self.graph_login
+		
+	elif stime == '-1M':
+		perfix = '1m_'
+		graph_cpu = perfix+self.graph_cpu
+		graph_mem = perfix+self.graph_mem
+		graph_disk = perfix+self.graph_disk
+		graph_network = perfix+self.graph_network
+		graph_login = perfix+self.graph_login
+		
+	
 	host = self.host
 	ISOFORMAT='%Y%m%d'
 	today = datetime.date.today()
@@ -63,10 +88,12 @@ class graph_rrdtool:
 		os.chdir(j)
 		#os.chdir(today_dir)
 		### nic.png
-		title = "Network Traffic Flow ("+date+")"
-         	rrdtool.graphv(self.graph_network,'--start',"-1d",
+		#title = "Network Traffic Flow ("+date+")"
+		title = "网络流量监控 ("+date+")"
+         	rrdtool.graphv(graph_network,'--start',stime,
 			'--vertical-label=Bytes/s',
-			'--x-grid','MINUTE:12:HOUR:1:HOUR:1:0:%H',
+			#'--x-grid','MINUTE:12:HOUR:1:HOUR:1:0:%H',
+			'--font','LEGEND:8:/usr/share/fonts/wqy-microhei/wqy-microhei.ttc',
 			'--width','650','--height','230',
 			'--title',title,
             		'DEF:input=nic.rrd:input:AVERAGE',
@@ -96,25 +123,27 @@ class graph_rrdtool:
             		'GPRINT:outerr:AVERAGE:Average\:%8.2lf %Sbps',
             		'GPRINT:outerr:MAX:Maxnum\:%8.2lf %Sbps\\n')
 
-		if not os.path.exists(self.graph_network):
+		if not os.path.exists(graph_network):
 			logging.error('Network png not found. PNG file generated failure.')
 		else:
 			k = '/'
 			dst = self.graph_dir+k+j+k+today_dir
-			dst_file = dst+k+self.graph_network
+			dst_file = dst+k+graph_network
 			print dst_file
 			if not os.path.exists(dst_file):
-				shutil.move(self.graph_network,dst)
+				shutil.move(graph_network,dst)
 			else:
 				logging.warning("Network png already exists.To be convered.")
 				os.remove(dst_file)
-				shutil.move(self.graph_network,dst)
+				shutil.move(graph_network,dst)
 			
 		### cpu.png
-		title = "CPU Utilzation rate  ("+date+")"
-         	rrdtool.graphv(self.graph_cpu,'--start',"-1d",
+		#title = "CPU Utilzation rate  ("+date+")"
+		title = "CPU 使用率  ("+date+")"
+         	rrdtool.graphv(graph_cpu,'--start',stime,
 			'--vertical-label=Bytes/s',
-			'--x-grid','MINUTE:12:HOUR:1:HOUR:1:0:%H',
+			#'--x-grid','MINUTE:12:HOUR:1:HOUR:1:0:%H',
+			'--font','LEGEND:8:/usr/share/fonts/wqy-microhei/wqy-microhei.ttc',
 			'--width','650','--height','230',
 			'--title',title,
             		'DEF:a=cpu.rrd:cpu_loadavg_1:AVERAGE',
@@ -165,27 +194,29 @@ class graph_rrdtool:
 			'GPRINT:idel:AVERAGE:Average\:%8.2lf %s',
 			'GPRINT:idel:MAX:Maximum\:%8.2lf %s\\n')
 
-		if not os.path.exists(self.graph_cpu):
+		if not os.path.exists(graph_cpu):
 			logging.error('CPU png not found. PNG file generated failure.')
 		else:
 			k = '/'
 			dst = self.graph_dir+k+j+k+today_dir
-			dst_file = dst+k+self.graph_cpu
+			dst_file = dst+k+graph_cpu
 			print dst
 			print dst_file
 			if not os.path.exists(dst_file):
-				shutil.move(self.graph_cpu,dst)
+				shutil.move(graph_cpu,dst)
 			else:
 				logging.warning("CPU png already exists.To be convered.")
 				os.remove(dst_file)
-				shutil.move(self.graph_cpu,dst)
+				shutil.move(graph_cpu,dst)
 		
 		
 		### mem.png
-		title = "Mem Utilzation   ("+date+")"
-         	rrdtool.graphv(self.graph_mem,'--start',"-1d",
+		#title = "Mem Utilzation   ("+date+")"
+		title = "内存使用情况  ("+date+")"
+         	rrdtool.graphv(graph_mem,'--start',stime,
 			'--vertical-label=Bytes',
-			'--x-grid','MINUTE:12:HOUR:1:HOUR:1:0:%H',
+			#'--x-grid','MINUTE:12:HOUR:1:HOUR:1:0:%H',
+			'--font','LEGEND:8:/usr/share/fonts/wqy-microhei/wqy-microhei.ttc',
 			'--width','650','--height','230',
 			'--title',title,
 			'DEF:memtotal=mem.rrd:mem_total:AVERAGE',
@@ -198,73 +229,83 @@ class graph_rrdtool:
 			'DEF:swapfreed=mem.rrd:swap_freed:AVERAGE',
 			'DEF:swapused=mem.rrd:swap_used:AVERAGE',
 			'DEF:swappercent=mem.rrd:swap_used_percnet:AVERAGE',
+			'CDEF:mtotal=memtotal,1048576,*',
+			'CDEF:mfreed=memfreed,1048576,*',
+			'CDEF:mused=memused,1048576,*',
+			'CDEF:bfreed=buffersfreed,1048576,*',
+			'CDEF:bused=buffersused,1048576,*',
+			'CDEF:stotal=swaptotal,1048576,*',
+			'CDEF:sfreed=swapfreed,1048576,*',
+			'CDEF:sused=swapused,1048576,*',
 			'COMMENT:\\r',
 			'COMMENT:\\r',
-			'LINE3:memtotal#FFC125:Mem Total',
-			'GPRINT:memtotal:LAST:Currnet\:%8.2lf %s',
-			'GPRINT:memtotal:AVERAGE:Average\:%8.2lf %s',
-			'GPRINT:memtotal:MAX:Maximum\:%8.2lf %s\\n',
-			'LINE3:memused#CD2626:Mem Used',
-			'GPRINT:memused:LAST:Currnet\:%8.2lf %s',
-			'GPRINT:memused:AVERAGE:Average\:%8.2lf %s',
-			'GPRINT:memused:MAX:Maximum\:%8.2lf %s\\n',
-			'LINE2:memfreed#00FF00:Mem Freed',
-			'GPRINT:memfreed:LAST:Currnet\:%8.2lf %s',
-			'GPRINT:memfreed:AVERAGE:Average\:%8.2lf %s',
-			'GPRINT:memfreed:MAX:Maximum\:%8.2lf %s\\n',
-			'LINE3:buffersfreed#0000FF:Mem Buffers Freed',
-			'GPRINT:buffersfreed:LAST:Currnet\:%8.2lf %s',
-			'GPRINT:buffersfreed:AVERAGE:Average\:%8.2lf %s',
-			'GPRINT:buffersfreed:MAX:Maximum\:%8.2lf %s\\n',
-			'LINE3:buffersused#EEEE00:Mem Buffers Used',
-			'GPRINT:buffersused:LAST:Currnet\:%8.2lf %s',
-			'GPRINT:buffersused:AVERAGE:Average\:%8.2lf %s',
-			'GPRINT:buffersused:MAX:Maximum\:%8.2lf %s\\n',
+			'LINE3:mtotal#FFC125:Mem Total',
+			'GPRINT:mtotal:LAST:Currnet\:%8.2lf %s',
+			'GPRINT:mtotal:AVERAGE:Average\:%8.2lf %s',
+			'GPRINT:mtotal:MAX:Maximum\:%8.2lf %s\\n',
+			'LINE3:mused#CD2626:Mem Used',
+			'GPRINT:mused:LAST:Currnet\:%8.2lf %s',
+			'GPRINT:mused:AVERAGE:Average\:%8.2lf %s',
+			'GPRINT:mused:MAX:Maximum\:%8.2lf %s\\n',
+			'LINE2:mfreed#00FF00:Mem Freed',
+			'GPRINT:mfreed:LAST:Currnet\:%8.2lf %s',
+			'GPRINT:mfreed:AVERAGE:Average\:%8.2lf %s',
+			'GPRINT:mfreed:MAX:Maximum\:%8.2lf %s\\n',
+			'LINE3:bfreed#0000FF:Mem Buffers Freed',
+			'GPRINT:bfreed:LAST:Currnet\:%8.2lf %s',
+			'GPRINT:bfreed:AVERAGE:Average\:%8.2lf %s',
+			'GPRINT:bfreed:MAX:Maximum\:%8.2lf %s\\n',
+			'LINE3:bused#EEEE00:Mem Buffers Used',
+			'GPRINT:bused:LAST:Currnet\:%8.2lf %s',
+			'GPRINT:bused:AVERAGE:Average\:%8.2lf %s',
+			'GPRINT:bused:MAX:Maximum\:%8.2lf %s\\n',
 			'LINE3:mempercent#EE9A49:Mem Used Percent',
 			'GPRINT:mempercent:LAST:Currnet\:%8.2lf %s',
 			'GPRINT:mempercent:AVERAGE:Average\:%8.2lf %s',
 			'GPRINT:mempercent:MAX:Maximum\:%8.2lf %s\\n', 
-			'LINE3:swaptotal#B4EEB4:SWAP Total',
-			'GPRINT:swaptotal:LAST:Currnet\:%8.2lf %s',
-			'GPRINT:swaptotal:AVERAGE:Average\:%8.2lf %s',
-			'GPRINT:swaptotal:MAX:Maximum\:%8.2lf %s\\n',
-			'LINE3:swapfreed#B4EEB4:SWAP Freed',
-			'GPRINT:swapfreed:LAST:Currnet\:%8.2lf %s',
-			'GPRINT:swapfreed:AVERAGE:Average\:%8.2lf %s',
-			'GPRINT:swapfreed:MAX:Maximum\:%8.2lf %s\\n',
-			'LINE3:swapused#B4EEB4:SWAP Used',
-			'GPRINT:swapused:LAST:Currnet\:%8.2lf %s',
-			'GPRINT:swapused:AVERAGE:Average\:%8.2lf %s',
-			'GPRINT:swapused:MAX:Maximum\:%8.2lf %s\\n',
+			'LINE3:stotal#B4EEB4:SWAP Total',
+			'GPRINT:stotal:LAST:Currnet\:%8.2lf %s',
+			'GPRINT:stotal:AVERAGE:Average\:%8.2lf %s',
+			'GPRINT:stotal:MAX:Maximum\:%8.2lf %s\\n',
+			'LINE3:sfreed#B4EEB4:SWAP Freed',
+			'GPRINT:sfreed:LAST:Currnet\:%8.2lf %s',
+			'GPRINT:sfreed:AVERAGE:Average\:%8.2lf %s',
+			'GPRINT:sfreed:MAX:Maximum\:%8.2lf %s\\n',
+			'LINE3:sused#B4EEB4:SWAP Used',
+			'GPRINT:sused:LAST:Currnet\:%8.2lf %s',
+			'GPRINT:sused:AVERAGE:Average\:%8.2lf %s',
+			'GPRINT:sused:MAX:Maximum\:%8.2lf %s\\n',
 			'LINE3:swappercent#AAAAAA:SWAP Used Percent',
 			'GPRINT:swappercent:LAST:Currnet\:%8.2lf %s',
 			'GPRINT:swappercent:AVERAGE:Average\:%8.2lf %s',
 			'GPRINT:swappercent:MAX:Maximum\:%8.2lf %s\\n')
 
 
-		if not os.path.exists(self.graph_mem):
+		if not os.path.exists(graph_mem):
 			logging.error('MEM png not found. PNG file generated failure.')
 		else:
 			k = '/'
 			dst = self.graph_dir+k+j+k+today_dir
-			dst_file = dst+k+self.graph_mem
+			dst_file = dst+k+graph_mem
 			print dst
 			print dst_file
 			if not os.path.exists(dst_file):
-				shutil.move(self.graph_mem,dst)
+				shutil.move(graph_mem,dst)
 			else:
 				logging.warning("MEM png already exists.To be convered.")
 				os.remove(dst_file)
-				shutil.move(self.graph_mem,dst)
+				shutil.move(graph_mem,dst)
 
 		### disk.png
 		title = "Disk Utilzation   ("+date+")"
-         	rrdtool.graphv(self.graph_disk,'--start',"-1d",
+		title = "磁盘使用情况   ("+date+")"
+         	rrdtool.graphv(graph_disk,'--start',stime,
 			'--vertical-label=Bytes',
-			'--x-grid','MINUTE:12:HOUR:1:HOUR:1:0:%H',
+			#'--x-grid','MINUTE:12:HOUR:1:HOUR:1:0:%H',
+			'--font','LEGEND:8:/usr/share/fonts/wqy-microhei/wqy-microhei.ttc',
 			'--width','650','--height','230',
 			'--title',title,
-			'DEF:percent=disk.rrd:disk_used_percnet:AVERAGE',
+			'DEF:percent=disk.rrd:disk_used_percent:AVERAGE',
 			'DEF:used=disk.rrd:disk_used:AVERAGE',
 			'DEF:freed=disk.rrd:disk_freed:AVERAGE',
 			'DEF:total=disk.rrd:disk_total:AVERAGE',
@@ -287,26 +328,28 @@ class graph_rrdtool:
 			'GPRINT:total:AVERAGE:Average\:%8.2lf %s',
 			'GPRINT:total:MAX:Maximum\:%8.2lf %s\\n')
 
-		if not os.path.exists(self.graph_disk):
+		if not os.path.exists(graph_disk):
 			logging.error('DISK png not found. PNG file generated failure.')
 		else:
 			k = '/'
 			dst = self.graph_dir+k+j+k+today_dir
-			dst_file = dst+k+self.graph_disk
+			dst_file = dst+k+graph_disk
 			print dst
 			print dst_file
 			if not os.path.exists(dst_file):
-				shutil.move(self.graph_disk,dst)
+				shutil.move(graph_disk,dst)
 			else:
 				logging.warning("DISK png already exists.To be convered.")
 				os.remove(dst_file)
-				shutil.move(self.graph_disk,dst)
+				shutil.move(graph_disk,dst)
 
 		### login_user.png
-		title = "Lonin User Num   ("+date+")"
-         	rrdtool.graphv(self.graph_login,'--start',"-1d",
+		#title = "Lonin User Num   ("+date+")"
+		title = "登陆用户数量   ("+date+")"
+         	rrdtool.graphv(graph_login,'--start',stime,
 			'--vertical-label=Bytes',
-			'--x-grid','MINUTE:12:HOUR:1:HOUR:1:0:%H',
+			#'--x-grid','MINUTE:12:HOUR:1:HOUR:1:0:%H',
+			'--font','LEGEND:8:/usr/share/fonts/wqy-microhei/wqy-microhei.ttc',
 			'--width','650','--height','230',
 			'--title',title,
 			'DEF:o=login_user.rrd:login_user_num:AVERAGE',
@@ -321,17 +364,17 @@ class graph_rrdtool:
 			'GPRINT:o:MAX:Maximum\:%8.0lf\\n')
 
 
-		if not os.path.exists(self.graph_login):
+		if not os.path.exists(graph_login):
 			logging.error('login png not found. PNG file generated failure.')
 		else:
 			k = '/'
 			dst = self.graph_dir+k+j+k+today_dir
-			dst_file = dst+k+self.graph_login
+			dst_file = dst+k+graph_login
 			print dst
 			print dst_file
 			if not os.path.exists(dst_file):
-				shutil.move(self.graph_login,dst)
+				shutil.move(graph_login,dst)
 			else:
 				logging.warning("Login png already exists.To be convered.")
 				os.remove(dst_file)
-				shutil.move(self.graph_login,dst)
+				shutil.move(graph_login,dst)

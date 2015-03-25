@@ -312,8 +312,8 @@ class rrdtool_collector:
 		timeArray = time.strptime(g, "%Y-%m-%d %H:%M:%S")
 		b = str(int(time.mktime(timeArray)))
 		c = str(row[2])
-		d = str(row[3])
-		e = str(row[4])
+		d = str(row[4])
+		e = str(row[3])
 		f = str(row[5])
 		# nic_list = [a,b,c,d]
 		print "%s %s %s %s %s %s" % (a,b,c,d,e,f)
