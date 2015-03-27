@@ -80,6 +80,12 @@ class otomat_conf:
         def graph_network(self):
                 graph_network = self.conf.get("graph","network")
                 return graph_network
+        def graph_login(self):
+                graph_login = self.conf.get("graph","login_user")
+                return graph_login
+        def graph_dir(self):
+                graph_dir = self.conf.get("graph","graph_dir")
+                return graph_dir
         # cleint agent configure
         def client_host(self):
                 c_host = self.conf.get("client","host")
@@ -102,3 +108,16 @@ class otomat_conf:
         def email_remote(self):
                email_remote = self.conf.get("email","remote")
                return email_remote
+        # create pdf  configure
+        def pdf_dir(self):
+                dir = self.conf.get("pdf","pdf_dir")
+                return dir
+        def pdf_daily(self):
+                day = self.conf.get("pdf","pdf_daily")
+                return day
+        def pdf_weekly(self):
+                week = self.conf.get("pdf","pdf_weekly")
+                return week
+        def pdf_monthly(self):
+                month = self.conf.get("pdf","pdf_monthly")
+                return month

@@ -30,6 +30,11 @@ network = nic.png
 login_user = login_user.png
 graph_dir = /var/lib/otomat-graph
 
+[pdf]
+pdf_dir = /var/lib/otomat-pdf
+pdf_daily = system_report_daily.pdf
+pdf_weekly = system_report_weekly.pdf
+pdf_monthly = system_report_monthly.pdf
 
 [client]
 host = 127.0.0.1
