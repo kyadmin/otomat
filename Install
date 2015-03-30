@@ -28,6 +28,8 @@ if [ "$#" = "1" ];then
          cp Service_scripts/otomat_bin_report-server /usr/bin/otomat_report_server
          cp Service_scripts/otomat-server-centos /etc/init.d/otomat-server
          cp Service_scripts/otomat-report-server-centos /etc/init.d/otomat-report-server
+	 cp Service_scripts/otomat_create_pdf_bin /usr/bin/
+	 cp Service_scripts/otomat-generate-pdf-server-centos  /etc/init.d/otomat-generate-pdf-server
 
     }
     server_ubuntu()

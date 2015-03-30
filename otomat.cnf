@@ -5,6 +5,7 @@ worker = 5
 log_dir = /var/log/otomat-server
 server_log = otomat-server.log
 report_log = otomat-report.log
+pdf_log = otomat-generate-pdf.log
 email_log = email.log
 
 [database]

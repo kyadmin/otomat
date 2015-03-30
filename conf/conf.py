@@ -26,6 +26,9 @@ class otomat_conf:
         def report_log(self):
                 r_log = self.conf.get("server","report_log")
                 return r_log
+        def pdf_log(self):
+               	p_log = self.conf.get("server","pdf_log")
+                return p_log
         def email_log(self):
                 e_log = self.conf.get("server","email_log")
                 return e_log

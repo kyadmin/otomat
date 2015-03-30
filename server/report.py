@@ -8,7 +8,6 @@ from  otomat.logs  import log as logging
 from  otomat.plugins  import rrdtool_data_collector
 from  otomat.plugins  import rrdtool_drafting
 from otomat.plugins import shell_cmd as shell
-from otomat.plugins import create_pdf as pdf
 
 
 config =conf.otomat_conf('/etc/otomat/otomat.cnf')
@@ -26,7 +25,6 @@ def main(argv=sys.argv[1:]):
 	garph_day = rrdtool_drafting.graph_rrdtool(argv)
 	garph_week = rrdtool_drafting.graph_rrdtool(argv)
 	garph_month = rrdtool_drafting.graph_rrdtool(argv)
-	create_pdf = pdf.create_pdf()
 	logging.info(("The otomat-report-server has been launched successfully !!!"))
 	while True:
 		t.rrdb()
@@ -37,8 +35,8 @@ def main(argv=sys.argv[1:]):
 		print "This is test hours:%s" % (now)
 		# week is 6
 		cmd = 'date +%w'
-		day = shell.shell_cmd(cmd)
-		day_week = day[0].split()[0]
+		day_today = shell.shell_cmd(cmd)
+		day_week = day_today[0].split()[0]
 		print "This is test day_week:%s" % (day_week)
 		# day is 1
 		day_month = str(datetime.date.today().day)
@@ -46,16 +44,16 @@ def main(argv=sys.argv[1:]):
 		if (now == '01' or now == '02' or now == '03' or now == '04' or now == '05') and (day_week == '6'):
 			garph_day.graph_rrdtool('-1d')
 			garph_week.graph_rrdtool('-1w')
-			create_pdf.create_pdf_report('day')
+			logging.info((" Garph generated weekly to complete successfully !!!"))
 			print 'weekend'
 		if (now == '01' or now == '02' or now == '03' or now == '04' or now == '05') and (day_month == '1'):
 			garph_day.graph_rrdtool('-1d')
 			garph_week.graph_rrdtool('-1M')
-			create_pdf.create_pdf_report('week')
+			logging.info((" Garph generated monthly to complete successfully !!!"))
 			print 'month end'
 		if (now == '01' or now == '02' or now == '03' or now == '04' or now == '05'):
 			garph_day.graph_rrdtool('-1d')
-			create_pdf.create_pdf_report('month')
+			logging.info((" Garph generated daily to complete successfully !!!"))
 			print 'day end'
 		
 		print "This is test end !!" 
