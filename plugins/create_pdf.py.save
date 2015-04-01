@@ -17,20 +17,8 @@ os.chdir(logdir)
 logging.set_logger(filename =logfile, mode = 'a')
 
 pdfdir = config.pdf_dir()
-if not os.path.exists(pdfdir):
+if not os.path.exists(pdfdir)
         os.makedirs(pdfdir,0o755)
-
-ISOFORMAT='%Y%m%d'
-today = datetime.date.today()
-today_dir = today.strftime(ISOFORMAT)
-host = config.rrdtool_host()
-for i in list(host.split(',')):
-	os.chdir(pdfdir)
-	if not os.path.exists(i):
-        	os.makedirs(i,0o755)
-	os.chdir(i)
-	if not os.path.exists(today_dir):
-		os.makedirs(today_dir,0o755)
 
 from reportlab.lib.enums import TA_JUSTIFY
 from reportlab.lib.pagesizes import letter
@@ -66,10 +54,10 @@ reportlab.platypus.Paragraph.wrap = wrap
 ###########
 class create_pdf:
 	def __init__(self):
-		global config
-		day = '1d_'
-		week = '1w_'
-		month = '1m_'
+		gloabl config
+		day = '1d'
+		week = '1w'
+		month = '1m'
 		self.cpu = config.graph_cpu()
 		self.mem = config.graph_mem()
 		self.network =  config.graph_network() 
@@ -78,7 +66,7 @@ class create_pdf:
 		self.day_file = day+self.cpu,day+self.mem,day+self.network,day+self.disk,day+self.login 
 		self.week_file = week+self.cpu,week+self.mem,week+self.network,week+self.disk,week+self.login 
 		self.month_file = month+self.cpu,month+self.mem,month+self.network,month+self.disk,month+self.login 
-        def create_pdf_report(self,flag):
+        def create_pdf_daily(self,flag):
                 global config
 		k = '/'
 		ISOFORMAT='%Y%m%d'
@@ -87,119 +75,120 @@ class create_pdf:
 		host = config.rrdtool_host()
 		#===================
 		graph_dir = config.graph_dir()
+                os.chdir(graph_dir)
 		for i in list(host.split(',')):
-                	os.chdir(graph_dir)
                 	os.chdir(i)
 			if not os.path.exists(today_dir):
 				logging.error('Today image dir is not found.')
 				pass
-			os.chdir(today_dir)
-			if (flag == 'day'):
-				# day
-				day_file = self.day_file 
-				for j in day_file:
-					# print j
-					# print os.getcwd()
-					if not os.path.isfile(j):
-						logging.error('Today image png file is not found.')
-						pass
-					else:
-               					#========================
-						pdf_dir = config.pdf_dir()
-						pdf_name = config.pdf_daily()
-                				dst_file = pdf_dir+k+i+k+today_dir+pdf_name
-						flag = 'day'
-						sql_host = "select distinct hostname,host_ip  from login_user \
+			else:
+				os.chidr(today_dir)
+				if (flag == "day"):
+					# day
+					day_file = self.day_file 
+					for j in day_file:
+						if not os.path.isfile(j):
+							logging.error('Today image png file is not found.')
+							pass
+						else:
+               						#========================
+							pdf_dir = config.pdf_dir()
+                					dst_file = pdf_dir+k+i+k+today_dir+k+pdf_name
+							flag = 'day'
+							sql_host = "select distinct hostname,host_ip  from login_user \
                 						where Time > date_sub(now(),interval 12 HOUR) and Time< now();"
-						import  MySQLdb
-						ip = config.db_host()
-						user = config.db_user()
-						passwd = config.db_password()
-						db = config.db_defaultdb()
-						conn = MySQLdb.connect(ip,user,passwd,db)
-						cur = conn.cursor()
-						cur.execute(sql_host)
-						rows = int(cur.rowcount)
-						print os.getcwd()
-						for l in xrange(rows):
-							row = cur.fetchone()
-							#print row[1]
-							#print i
-							if ( row[1] == i):
-								hostname = row[0]
-								#print 'This is create pdf name: %s' % dst_file
-								#print 'This is create pdf hostname: %s' % hostname
-                						doc = SimpleDocTemplate(dst_file,pagesize=letter,
-                                						rightMargin=72,leftMargin=72,topMargin=72,bottomMargin=18)
-								self.ptext_template(hostname,i,doc,flag)
-						conn.close()
-			elif (flag == 'week'):
-				# week
-				week_file = self.week_file 
-				for j in week_file:
-					if not os.path.isfile(j):
-						logging.error('Week image png file is not found.')
-						pass
-					else:
-               					#========================
-						pdf_dir = config.pdf_dir()
-						pdf_name = config.pdf_weekly()
-                				dst_file = pdf_dir+k+i+k+today_dir+pdf_name
-						flag = 'week'
-						sql_host = "select distinct hostname,host_ip  from login_user \
-                						where Time > date_sub(now(),interval 12 HOUR) and Time< now();"
-						import  MySQLdb
-						ip = config.db_host()
-						user = config.db_user()
-						passwd = config.db_password()
-						db = config.db_defaultdb()
-						conn = MySQLdb.connect(ip,user,passwd,db)
-						cur = conn.cursor()
-						cur.execute(sql_host)
-						rows = int(cur.rowcount)
-						for l in xrange(rows):
-							row = cur.fetchone()
-							if ( row[1] == i):
-								hostname = row[0]
-                						doc = SimpleDocTemplate(dst_file,pagesize=letter,
+							import  MySQLdb
+							ip = config.db_host()
+							user = config.db_user()
+							passwd = config.db_password()
+							db = config.db_defaultdb()
+							conn = MySQLdb.connect(ip,user,password,db)
+							cur = conn.cursor()
+							cur.execute(sql_hostname)
+							rows = int(cur.rowcount)
+							for l in xrange(rows):
+								row = cur.fetchone()
+								if ( row[1] == i):
+									hostname = row[0]
+								else:
+									logging.error('hostname  is not found.')
+							conn.close()
+                					doc = SimpleDocTemplate(dst_file,pagesize=letter,
                                 					rightMargin=72,leftMargin=72,topMargin=72,bottomMargin=18)
-								self.ptext_template(hostname,i,doc,flag)
-						conn.close()
-			elif (flag == 'month'):
-				# month
-				month_file = self.month_file 
-				for j in month_file:
-					if not os.path.isfile(j):
-						logging.error('Month image png file is not found.')
-						pass
-					else:
-               					#========================
-						pdf_dir = config.pdf_dir()
-						pdf_name = config.pdf_monthly()
-                				dst_file = pdf_dir+k+i+k+today_dir+pdf_name
-						flag = 'month'
-						sql_host = "select distinct hostname,host_ip  from login_user \
+                                					styles=getSampleStyleSheet()
+							self.ptext_template(hostname,i,flag)
+							doc.build(Story)
+				elif (flag == "week"):
+					# week
+					week_file = self.week_file 
+					for j in week_file:
+						if not os.path.isfile(j):
+							logging.error('Week image png file is not found.')
+							pass
+						else:
+               						#========================
+							pdf_dir = config.pdf_dir()
+                					dst_file = pdf_dir+k+i+k+today_dir+k+pdf_name
+							flag = 'week'
+							sql_host = "select distinct hostname,host_ip  from login_user \
                 						where Time > date_sub(now(),interval 12 HOUR) and Time< now();"
-						import  MySQLdb
-						ip = config.db_host()
-						user = config.db_user()
-						passwd = config.db_password()
-						db = config.db_defaultdb()
-						conn = MySQLdb.connect(ip,user,passwd,db)
-						cur = conn.cursor()
-						cur.execute(sql_host)
-						rows = int(cur.rowcount)
-						for l in xrange(rows):
-							row = cur.fetchone()
-							if ( row[1] == i):
-								hostname = row[0]
-                						doc = SimpleDocTemplate(dst_file,pagesize=letter,
+							import  MySQLdb
+							ip = config.db_host()
+							user = config.db_user()
+							passwd = config.db_password()
+							db = config.db_defaultdb()
+							conn = MySQLdb.connect(ip,user,password,db)
+							cur = conn.cursor()
+							cur.execute(sql_hostname)
+							rows = int(cur.rowcount)
+							for l in xrange(rows):
+								row = cur.fetchone()
+								if ( row[1] == i):
+									hostname = row[0]
+								else:
+									logging.error('hostname  is not found.')
+							conn.close()
+                					doc = SimpleDocTemplate(dst_file,pagesize=letter,
                                 					rightMargin=72,leftMargin=72,topMargin=72,bottomMargin=18)
-								self.ptext_template(hostname,i,doc,flag)
-						conn.close()
+							self.ptext_template(hostname,i,flag)
+							doc.build(Story)
+				elif (flag == 'month'):
+					# month
+					month_file = self.month_file 
+					for j in month_file:
+						if not os.path.isfile(j):
+							logging.error('Month image png file is not found.')
+							pass
+						else:
+               						#========================
+							pdf_dir = config.pdf_dir()
+                					dst_file = pdf_dir+k+i+k+today_dir+k+pdf_name
+							flag = 'month'
+							sql_host = "select distinct hostname,host_ip  from login_user \
+                						where Time > date_sub(now(),interval 12 HOUR) and Time< now();"
+							import  MySQLdb
+							ip = config.db_host()
+							user = config.db_user()
+							passwd = config.db_password()
+							db = config.db_defaultdb()
+							conn = MySQLdb.connect(ip,user,password,db)
+							cur = conn.cursor()
+							cur.execute(sql_hostname)
+							rows = int(cur.rowcount)
+							for l in xrange(rows):
+								row = cur.fetchone()
+								if ( row[1] == i):
+									hostname = row[0]
+								else:
+									logging.error('hostname  is not found.')
+							conn.close()
+                					doc = SimpleDocTemplate(dst_file,pagesize=letter,
+                                					rightMargin=72,leftMargin=72,topMargin=72,bottomMargin=18)
+							self.ptext_template(hostname,i,flag)
+							doc.build(Story)
 
 
-	def ptext_template(self,hostname,ip,doc,flag):
+	def ptext_template(self,hostname,ip,flag):
 		styles=getSampleStyleSheet()
                 #styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
 		normalStyle = copy.deepcopy(styles['Normal'])
@@ -209,9 +198,9 @@ class create_pdf:
 		normalStyle.leading = 20
 		##首行缩进
 		normalStyle.firstLineIndent = 32
-		day = '1d_'
-		week = '1w_'
-		month = '1m_'
+		day = '1d'
+		week = '1w'
+		month = '1m'
 
 		Story = []
 		if (flag == 'day'):
@@ -263,7 +252,6 @@ class create_pdf:
 		#=============================
 		#hostname = 'jumpclient02'
 		hostname = hostname
-		print 'This is hostname:%s' % hostname
 		#ip = '172.172.0.8'
 		ip = ip
 		#==================================
@@ -294,7 +282,7 @@ class create_pdf:
 		Story.append(Paragraph(ptext, normalStyle))
 		Story.append(Spacer(1, 48))
 
-		ptext = '<font size=12>主机名：%s</font>' % hostname
+		ptext = '<font size=12>主机名：%s</font>' % host
 		Story.append(Paragraph(ptext, normalStyle))
 		Story.append(Spacer(1, 12))
 
@@ -346,5 +334,4 @@ class create_pdf:
 		Story.append(Paragraph(ptext, normalStyle))
 		Story.append(Spacer(1, 12))
 		Story.append(PageBreak())
-		doc.build(Story)
 
