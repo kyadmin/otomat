@@ -57,15 +57,20 @@ class active_agent:
 			print data
 			logging.info(("Otomat agent started Successfully!"))
 			while True:
-				s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-				s.connect((self.host,int(self.port)))
-				logging.info(("Otomat agent has been successfully connected to the server!!"))
-				s.sendall(data)
-				logging.debug(data)
-				buf = s.recv(8092)
-				if not len(data): break
-				s.close()
-				time.sleep(300)
+                try:
+				    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+				    s.connect((self.host,int(self.port)))
+				    logging.info(("Otomat agent has been successfully connected to the server!!"))
+				    s.sendall(data)
+				    logging.debug(data)
+				    buf = s.recv(8092)
+				    if not len(data): break
+				    s.close()
+                except:
+                    continue
+                    logging.error()
+                finally:
+				    time.sleep(300)
 		except:
 			logging.error('The socket connect to the server failed!!!')
     def transnit_data(self):
