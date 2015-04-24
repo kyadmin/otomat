@@ -57,7 +57,7 @@ class active_agent:
 			print data
 			logging.info(("Otomat agent started Successfully!"))
 			while True:
-                try:
+                                try:
 				    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 				    s.connect((self.host,int(self.port)))
 				    logging.info(("Otomat agent has been successfully connected to the server!!"))
@@ -66,10 +66,10 @@ class active_agent:
 				    buf = s.recv(8092)
 				    if not len(data): break
 				    s.close()
-                except:
-                    continue
-                    logging.error()
-                finally:
+                                except:
+                                        continue
+                                        logging.error('socket.error: [Errno 111] Connection refused')
+                                finally:
 				    time.sleep(300)
 		except:
 			logging.error('The socket connect to the server failed!!!')
