@@ -6,7 +6,7 @@ import time,datetime
 from otomat.conf import conf
 from  otomat.logs  import log as logging
 from otomat.plugins import shell_cmd as shell
-from otomat.plugins import create_pdf as pdf
+from otomat.plugins import create_pdf_only as pdf
 
 
 config =conf.otomat_conf('/etc/otomat/otomat.cnf')
