@@ -36,8 +36,8 @@ export PATH="${PATH:+$PATH:}/usr/bin:/bin"
 case "$1" in
   start)
 	log_daemon_msg "Starting Otomat  server" "otomat" || true
-        if [ ! -f /var/run/otomat-report-server.pid ];then
-           touch /var/run/otomat-report-server.pid
+        if [ ! -f /var/run/otomat_report_server.pid ];then
+           touch /var/run/otomat_report_server.pid
 	fi
 	/usr/bin/otomat_report_server  /etc/otomat/otomat.cnf & < /dev/null || STATUS=0
         for i in $PID
@@ -49,7 +49,7 @@ case "$1" in
   stop)
 	log_daemon_msg "Stopping Otomat server" "otomat" || true
 	start-stop-daemon --stop --quiet --oknodo \
-        --pidfile /var/run/otomat-report-server.pid && rm -f /var/run/otomat-report-server.pid
+        --pidfile /var/run/otomat_report_server.pid && rm -f /var/run/otomat_report_server.pid
 	log_end_msg 0 || true
 	;;
 

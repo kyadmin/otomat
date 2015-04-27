@@ -17,8 +17,8 @@ configs=(
 pidfile="/var/run/$prog/$prog.pid"
 logfile="/var/log/otomat-server/otomat-report.log"
 
-if [ ! -d /var/run/otomat-server ];then
-   mkdir /var/run/otomat-server
+if [ ! -d /var/run/otomat_report ];then
+   mkdir /var/run/otomat_report
 elif [ ! -d /var/log/$prog ];then
    mkdir /var/log/$prog
 elif [ ! -f $logfile ];then
