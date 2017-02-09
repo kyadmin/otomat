@@ -1,3 +1,4 @@
 <code_scheme name="Default copy">
-  <option name="LINE_SEPARATOR" value="&#13;" />
+  <option name="FORMATTER_TAGS_ENABLED" value="true" />
+  <option name="FORMATTER_TAGS_ACCEPT_REGEXP" value="true" />
 </code_scheme>
